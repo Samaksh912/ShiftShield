@@ -6,8 +6,8 @@ ShiftShield is an AI-enabled parametric insurance platform built exclusively for
 
 Unlike traditional insurance, ShiftShield uses objective real-world signals and AI-based income modeling to detect income disruption and trigger payouts automatically, without requiring any manual claim submission from the rider.
 
-> **Video Walkthrough:** [Insert 2-minute prototype video link here]
-> **Repository:** [Insert GitHub/GitLab link here]
+> **Video Walkthrough:** https://drive.google.com/file/d/1t3hp1slSeaQGhkAPZSOycEAvr1tpmy98/view?usp=drivesdk
+> **Repository:** https://github.com/Samaksh912/ShiftShield
 
 ---
 
