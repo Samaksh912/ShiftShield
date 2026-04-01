@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../theme/app_colors.dart';
 import '../widgets/primary_button.dart';
+import '../../auth/screens/login_screen.dart';
 import 'slide_1_dark.dart';
 import 'slide_2_dark.dart';
 import 'slide_3_dark.dart';
@@ -30,16 +31,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      // Proceed to Home/Main App
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
     }
   }
 
   void _skipOnboarding() {
-    // Proceed to Home/Main App immediately
-    _pageController.animateToPage(
-      2,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
     );
   }
 

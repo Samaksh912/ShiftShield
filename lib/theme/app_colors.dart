@@ -5,15 +5,22 @@ class AppColors {
   static const Color primary = Color(0xFFFF915A);
   static const Color primaryContainer = Color(0xFFFF7A31);
   static const Color primarySolid = Color(0xFFFF6A00); // Slide 2 specific
+  static const Color primaryDim = Color(0xFFF76600);
   static const Color onPrimaryFixed = Color(0xFF000000);
+  
+  // Tertiary
+  static const Color tertiary = Color(0xFFFFC96F);
+  static const Color tertiaryDim = Color(0xFFEFA914);
   
   // Surfaces
   static const Color surface = Color(0xFF0E0E0E);
+  static const Color surfaceContainerLowest = Color(0xFF000000);
   static const Color surfaceContainerLow = Color(0xFF131313);
   static const Color surfaceContainer = Color(0xFF1A1A1A);
   static const Color surfaceContainerHigh = Color(0xFF20201F);
   static const Color surfaceContainerHighest = Color(0xFF262626);
   static const Color surfaceBright = Color(0xFF2C2C2C);
+  static const Color surfaceVariant = Color(0xFF262626);
   
   // Typography
   static const Color onSurface = Color(0xFFFFFFFF);

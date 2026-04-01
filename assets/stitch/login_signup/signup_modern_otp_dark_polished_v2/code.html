@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Signup - Precision Velocity</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-container": "#FF6A00",
+                        "tertiary-dim": "#efa914",
+                        "on-secondary-fixed-variant": "#803f00",
+                        "primary": "#FF6A00",
+                        "inverse-on-surface": "#565555",
+                        "surface": "#0e0e0e",
+                        "secondary-dim": "#ee8530",
+                        "error": "#ff7351",
+                        "on-tertiary-fixed": "#3a2600",
+                        "inverse-primary": "#a24100",
+                        "on-background": "#ffffff",
+                        "tertiary-container": "#ffb627",
+                        "surface-container-lowest": "#000000",
+                        "secondary-container": "#954a00",
+                        "tertiary": "#ffc96f",
+                        "surface-variant": "#262626",
+                        "on-error-container": "#ffd2c8",
+                        "on-secondary-container": "#fff6f2",
+                        "primary-fixed-dim": "#f76600",
+                        "on-error": "#450900",
+                        "on-surface-variant": "#adaaaa",
+                        "background": "#0e0e0e",
+                        "tertiary-fixed-dim": "#efa914",
+                        "surface-tint": "#FF6A00",
+                        "on-tertiary": "#614100",
+                        "outline-variant": "#484847",
+                        "on-primary-fixed": "#000000",
+                        "on-primary": "#531e00",
+                        "tertiary-fixed": "#ffb627",
+                        "surface-container-high": "#20201f",
+                        "on-tertiary-fixed-variant": "#604100",
+                        "surface-container-highest": "#262626",
+                        "on-primary-fixed-variant": "#501c00",
+                        "error-container": "#b92902",
+                        "error-dim": "#d53d18",
+                        "surface-container": "#1a1a1a",
+                        "outline": "#767575",
+                        "surface-bright": "#2c2c2c",
+                        "surface-dim": "#0e0e0e",
+                        "on-secondary-fixed": "#552800",
+                        "inverse-surface": "#fcf9f8",
+                        "on-tertiary-container": "#553900",
+                        "primary-fixed": "#FF6A00",
+                        "surface-container-low": "#131313",
+                        "secondary-fixed-dim": "#ffb37e",
+                        "secondary-fixed": "#ffc6a0",
+                        "on-secondary": "#4d2300",
+                        "primary-dim": "#f76600",
+                        "secondary": "#ff923c",
+                        "on-surface": "#ffffff",
+                        "on-primary-container": "#411500"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scooter-trail {
+            background: linear-gradient(90deg, rgba(255,106,0,0.4) 0%, rgba(255,106,0,0) 100%);
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0e0e0e; }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 10px; }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col items-center justify-center p-6 selection:bg-primary selection:text-on-primary-fixed">
+<!-- Hero Visual Section -->
+<div class="relative w-full max-w-md mb-12 flex flex-col items-center">
+<!-- Top Back Button -->
+<div class="absolute -top-12 left-0 z-20">
+<button class="text-on-surface hover:text-primary transition-colors flex items-center justify-center size-10 rounded-full bg-surface-container-high border border-outline-variant/10">
+<span class="material-symbols-outlined" style="font-variation-settings: 'wght' 300;">arrow_back</span>
+</button>
+</div>
+<div class="absolute -top-12 -left-12 w-64 h-64 bg-primary/10 blur-[100px] rounded-full"></div>
+<div class="relative w-full aspect-video flex items-center justify-center">
+<div class="relative group">
+<!-- Delivery Scooter Icon with Speed Trails -->
+<div class="relative z-10 text-primary transition-transform duration-700 hover:-translate-y-2">
+<span class="material-symbols-outlined text-[120px] drop-shadow-[0_0_15px_rgba(255,106,0,0.3)]">moped</span>
+</div>
+<!-- Dynamic Trails -->
+<div class="absolute top-1/2 -left-16 w-32 h-1 scooter-trail rounded-full opacity-60"></div>
+<div class="absolute top-1/3 -left-20 w-40 h-1 scooter-trail rounded-full opacity-40"></div>
+<div class="absolute top-2/3 -left-12 w-24 h-1 scooter-trail rounded-full opacity-30"></div>
+</div>
+</div>
+<div class="text-center mt-6 z-10">
+<h1 class="font-headline text-5xl font-extrabold tracking-tighter uppercase mb-2">
+                Join the <span class="text-primary italic">Fleet</span>
+</h1>
+<p class="text-on-surface-variant font-medium text-lg leading-relaxed max-w-[300px] mx-auto">
+                Enter your mobile number to get started with instant protection.
+            </p>
+</div>
+</div>
+<!-- Signup Card -->
+<main class="w-full max-w-md bg-surface-container-low p-8 rounded-[2rem] border-t border-white/5 shadow-2xl relative overflow-hidden">
+<!-- Subtle Glow Edge -->
+<div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+<div class="space-y-8">
+<!-- Mobile Number Input Group -->
+<div class="space-y-3">
+<label class="font-label text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant ml-1">
+                    Mobile Number
+                </label>
+<div class="flex items-center gap-3">
+<!-- Country Code Selector (Static) -->
+<div class="flex items-center justify-center bg-surface-container h-16 px-4 rounded-xl font-headline font-bold text-lg text-primary border border-white/5">
+                        +91
+                    </div>
+<!-- Main Input -->
+<div class="flex-1 relative group">
+<input class="w-full h-16 bg-surface-container border-none focus:ring-2 focus:ring-primary/50 rounded-xl px-6 font-headline text-xl font-medium tracking-widest placeholder:text-outline/40 transition-all" maxlength="10" placeholder="98765 43210" type="tel"/>
+</div>
+</div>
+</div>
+<!-- CTA Section -->
+<div class="space-y-6">
+<button class="w-full h-16 bg-gradient-to-br from-primary to-primary-container rounded-xl flex items-center justify-center gap-3 group active:scale-95 transition-all duration-200 shadow-lg shadow-primary/20">
+<span class="font-headline font-black text-on-primary-fixed uppercase tracking-widest text-lg">
+                        Get OTP
+                    </span>
+<span class="material-symbols-outlined text-on-primary-fixed transition-transform group-hover:translate-x-1" style="font-variation-settings: 'wght' 700">
+                        arrow_forward
+                    </span>
+</button>
+<div class="flex flex-col items-center gap-6">
+<div class="flex items-center gap-4 w-full">
+<div class="h-px flex-1 bg-outline/10"></div>
+<span class="text-[10px] font-black uppercase tracking-[0.3em] text-outline/50 whitespace-nowrap">Shield Protection</span>
+<div class="h-px flex-1 bg-outline/10"></div>
+</div>
+<p class="text-center text-[10px] text-on-surface-variant leading-relaxed px-4 uppercase font-bold tracking-wider">
+                        By continuing, you agree to our 
+                        <a class="text-on-surface hover:text-primary transition-colors" href="#">Terms</a> and 
+                        <a class="text-on-surface hover:text-primary transition-colors" href="#">Privacy Policy</a>.
+                    </p>
+</div>
+</div>
+</div>
+</main>
+<div class="mt-8 flex justify-center items-center">
+<a class="font-body text-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-2 group" href="#">
+<span>Already have an account?</span>
+<span class="text-primary font-extrabold group-hover:underline underline-offset-4 transition-all">Log In</span>
+</a>
+</div>
+<!-- Footer Decorative Branding -->
+<footer class="mt-12 flex items-center gap-2 opacity-30 select-none">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">verified_user</span>
+<span class="font-headline font-black text-sm uppercase tracking-widest">Shield Secure Protocol</span>
+</footer>
+<!-- Background Elements -->
+<div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+<div class="absolute bottom-[-10%] right-[-5%] w-96 h-96 bg-primary/5 blur-[120px] rounded-full"></div>
+<div class="absolute top-[20%] left-[10%] w-48 h-48 bg-tertiary/5 blur-[100px] rounded-full"></div>
+</div>
+</body></html>
