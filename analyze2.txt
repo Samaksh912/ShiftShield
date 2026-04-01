@@ -1,0 +1,55 @@
+Analyzing GuidewireShiftShield...                               
+
+  error - Target of URI doesn't exist: '../../theme/app_colors.dart' - lib\features\onboarding\screens\onboarding_screen.dart:2:8 - uri_does_not_exist
+  error - Undefined name 'AppColors' - lib\features\onboarding\screens\onboarding_screen.dart:44:24 - undefined_identifier
+  error - Undefined name 'AppColors' - lib\features\onboarding\screens\onboarding_screen.dart:88:62 - undefined_identifier
+  error - Undefined name 'AppColors' - lib\features\onboarding\screens\onboarding_screen.dart:89:62 - undefined_identifier
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\onboarding_screen.dart:90:60 - deprecated_member_use
+  error - Undefined name 'AppColors' - lib\features\onboarding\screens\onboarding_screen.dart:110:47 - undefined_identifier
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\onboarding_screen.dart:110:96 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\onboarding_screen.dart:110:128 - deprecated_member_use
+  error - Undefined name 'AppColors' - lib\features\onboarding\screens\onboarding_screen.dart:114:40 - undefined_identifier
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_1_light.dart:31:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_1_light.dart:34:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_1_light.dart:71:60 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_1_light.dart:83:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_1_light.dart:108:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_2_dark.dart:24:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_2_dark.dart:27:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_2_dark.dart:60:56 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_2_dark.dart:63:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_2_dark.dart:67:60 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_2_dark.dart:108:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_2_dark.dart:169:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_2_dark.dart:193:65 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_2_dark.dart:225:65 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_2_dark.dart:265:62 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_2_dark.dart:269:66 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_2_dark.dart:301:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_3_dark.dart:47:56 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_3_dark.dart:51:60 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_3_dark.dart:68:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_3_dark.dart:86:66 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_3_dark.dart:236:79 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_3_dark.dart:280:59 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_3_dark.dart:305:74 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\screens\slide_3_dark.dart:308:59 - deprecated_member_use
+  error - Target of URI doesn't exist: '../../theme/app_colors.dart' - lib\features\onboarding\widgets\glass_header.dart:3:8 - uri_does_not_exist
+  error - Undefined name 'AppColors' - lib\features\onboarding\widgets\glass_header.dart:24:20 - undefined_identifier
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\onboarding\widgets\glass_header.dart:27:37 - deprecated_member_use
+  error - Invalid constant value - lib\features\onboarding\widgets\glass_header.dart:39:28 - invalid_constant
+  error - Undefined name 'AppColors' - lib\features\onboarding\widgets\glass_header.dart:39:28 - undefined_identifier
+  error - Undefined name 'AppColors' - lib\features\onboarding\widgets\glass_header.dart:46:34 - undefined_identifier
+  error - Undefined name 'AppColors' - lib\features\onboarding\widgets\glass_header.dart:56:30 - undefined_identifier
+  error - Target of URI doesn't exist: '../../theme/app_colors.dart' - lib\features\onboarding\widgets\primary_button.dart:2:8 - uri_does_not_exist
+  error - Invalid constant value - lib\features\onboarding\widgets\primary_button.dart:71:17 - invalid_constant
+  error - The values in a const list literal must be constants - lib\features\onboarding\widgets\primary_button.dart:71:17 - non_constant_list_element
+  error - Undefined name 'AppColors' - lib\features\onboarding\widgets\primary_button.dart:71:17 - undefined_identifier
+  error - The values in a const list literal must be constants - lib\features\onboarding\widgets\primary_button.dart:72:17 - non_constant_list_element
+  error - Undefined name 'AppColors' - lib\features\onboarding\widgets\primary_button.dart:72:17 - undefined_identifier
+  error - Undefined name 'AppColors' - lib\features\onboarding\widgets\primary_button.dart:77:24 - undefined_identifier
+  error - Undefined name 'AppColors' - lib\features\onboarding\widgets\primary_button.dart:89:30 - undefined_identifier
+  error - Undefined name 'AppColors' - lib\features\onboarding\widgets\primary_button.dart:98:26 - undefined_identifier
+warning - Unused import: 'package:google_fonts/google_fonts.dart' - lib\main.dart:2:8 - unused_import
+  error - The name 'MyApp' isn't a class - test\widget_test.dart:16:35 - creation_with_non_type
+

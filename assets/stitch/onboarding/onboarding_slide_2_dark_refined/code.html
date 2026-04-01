@@ -1,0 +1,185 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary": "#614100",
+              "tertiary": "#ffc96f",
+              "primary": "#FF6A00",
+              "on-secondary-container": "#fff6f2",
+              "primary-fixed": "#FF6A00",
+              "primary-container": "#FF6A00",
+              "primary-fixed-dim": "#f76600",
+              "on-tertiary-container": "#553900",
+              "secondary": "#ff923c",
+              "on-secondary": "#4d2300",
+              "surface-tint": "#FF6A00",
+              "tertiary-fixed": "#ffb627",
+              "surface-container-low": "#131313",
+              "on-surface": "#ffffff",
+              "inverse-on-surface": "#565555",
+              "surface-variant": "#262626",
+              "background": "#0e0e0e",
+              "surface-container-high": "#20201f",
+              "tertiary-fixed-dim": "#efa914",
+              "secondary-fixed-dim": "#ffb37e",
+              "on-primary-fixed": "#000000",
+              "inverse-primary": "#a24100",
+              "error-container": "#b92902",
+              "primary-dim": "#ff7526",
+              "on-secondary-fixed-variant": "#803f00",
+              "on-primary-fixed-variant": "#501c00",
+              "surface-dim": "#0e0e0e",
+              "secondary-container": "#954a00",
+              "on-background": "#ffffff",
+              "tertiary-container": "#ffb627",
+              "on-primary-container": "#411500",
+              "inverse-surface": "#fcf9f8",
+              "secondary-dim": "#ee8530",
+              "on-primary": "#531e00",
+              "surface-bright": "#2c2c2c",
+              "surface": "#0e0e0e",
+              "on-secondary-fixed": "#552800",
+              "on-tertiary-fixed": "#3a2600",
+              "on-surface-variant": "#adaaaa",
+              "surface-container": "#1a1a1a",
+              "secondary-fixed": "#ffc6a0",
+              "outline": "#767575",
+              "on-error-container": "#ffd2c8",
+              "surface-container-highest": "#262626",
+              "outline-variant": "#484847",
+              "on-tertiary-fixed-variant": "#604100",
+              "on-error": "#450900",
+              "error": "#ff7351",
+              "error-dim": "#d53d18",
+              "surface-container-lowest": "#000000",
+              "tertiary-dim": "#efa914"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-shield-glow {
+            box-shadow: 0 0 20px 0 rgba(255, 106, 0, 0.15);
+        }
+        .bento-inner-shadow {
+            box-shadow: inset 0 0 40px 0 rgba(0,0,0,0.4);
+        }
+        .text-glow {
+            text-shadow: 0 0 15px rgba(255, 106, 0, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary selection:text-on-primary-fixed overflow-x-hidden">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/5">
+<div class="max-w-md mx-auto h-16 flex items-center px-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="shield" style="">shield</span>
+<span class="font-headline uppercase tracking-[0.2em] text-[10px] font-bold text-primary" style="">IGNITE SYSTEM</span>
+</div>
+</div>
+</nav>
+<main class="min-h-screen flex flex-col items-center justify-between pt-24 pb-44 px-6 max-w-md mx-auto relative">
+<!-- Hero Visual Section: Centered Phone Mockup -->
+<div class="w-full flex-grow flex items-center justify-center py-4">
+<div class="relative w-full max-w-[280px] aspect-[9/18.5] bg-surface-container-low rounded-[3rem] p-4 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden">
+<!-- Notch -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-black rounded-b-2xl z-20"></div>
+<!-- Internal UI -->
+<div class="mt-8 space-y-4">
+<!-- Active Status Badge -->
+<div class="bg-primary/10 border border-primary/20 rounded-2xl p-3 flex items-center gap-3 active-shield-glow">
+<div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#FF6A00]"></div>
+<span class="text-[9px] font-headline font-bold text-primary tracking-[0.1em] uppercase" style="">Shield Active</span>
+</div>
+<!-- Auto-Processing Card -->
+<div class="bg-surface-container-highest rounded-2xl p-4 space-y-4 border border-white/5">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-[8px] text-on-surface-variant font-label uppercase tracking-wider mb-0.5" style="">Claim ID #8812</p>
+<p class="text-sm font-headline font-bold text-white" style="">Heavy Rain</p>
+</div>
+<span class="material-symbols-outlined text-primary text-lg" data-icon="auto_awesome" style="">auto_awesome</span>
+</div>
+<!-- Progress Logic -->
+<div class="space-y-2">
+<div class="flex justify-between text-[9px] text-on-surface-variant">
+<span class="" style="">Analyzing Impact</span>
+<span class="text-primary font-bold" style="">82%</span>
+</div>
+<div class="h-1.5 w-full bg-black/40 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[82%] rounded-full"></div>
+</div>
+</div>
+<!-- Data Points -->
+<div class="grid grid-cols-2 gap-2 pt-1">
+<div class="bg-surface-container-low rounded-xl p-2.5 border border-white/5">
+<p class="text-[7px] text-on-surface-variant uppercase tracking-wider mb-0.5" style="">Time</p>
+<p class="text-[10px] font-bold text-white" style="">14:02:11</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-2.5 border border-white/5">
+<p class="text-[7px] text-on-surface-variant uppercase tracking-wider mb-0.5" style="">Payout</p>
+<p class="text-[10px] font-bold text-primary" style="">Instant</p>
+</div>
+</div>
+</div>
+<!-- Visual Confirmation Overlay -->
+<div class="flex justify-center py-6">
+<div class="relative group">
+<div class="absolute inset-0 bg-primary blur-2xl opacity-20 group-hover:opacity-30 transition-opacity scale-150"></div>
+<span class="material-symbols-outlined text-primary text-6xl relative z-10" data-icon="verified_user" style="font-variation-settings: &quot;FILL&quot; 1;">verified_user</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Content Section -->
+<div class="w-full text-center space-y-4 mb-8">
+<h1 class="text-4xl font-headline font-bold leading-[1.1] tracking-tight" style="">
+                Automatic Claims,<br>
+<span class="text-primary text-glow" style="">Zero Hassle.</span>
+</h1>
+<p class="text-on-surface-variant text-base leading-relaxed px-2" style="">
+                Our AI detects incidents in real-time. No paperwork, no phone calls—just instant coverage when it matters most.
+            </p>
+</div>
+<!-- Bottom Controls -->
+<div class="fixed bottom-0 left-0 w-full px-6 pb-10 pt-8 bg-gradient-to-t from-background via-background to-transparent z-40">
+<div class="max-w-md mx-auto space-y-8">
+<!-- Progress Indicator (Dots) - Perfectly Centered -->
+<div class="flex justify-center items-center gap-2.5">
+<div class="h-1.5 w-1.5 rounded-full bg-white/10"></div>
+<div class="h-1.5 w-8 rounded-full bg-primary shadow-[0_0_8px_rgba(255,106,0,0.3)]"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-white/10"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-white/10"></div>
+</div>
+<!-- Primary Action -->
+<button class="w-full h-16 bg-primary rounded-2xl flex items-center justify-center gap-3 group active:scale-[0.98] transition-all duration-200 shadow-[0_8px_24px_rgba(255,106,0,0.2)]" style="">
+<span class="text-on-primary-fixed font-headline font-bold text-base uppercase tracking-[0.15em] ml-6" style="">Next</span>
+<span class="material-symbols-outlined text-on-primary-fixed group-hover:translate-x-1 transition-transform" data-icon="arrow_forward" style="">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Decorative Elements -->
+<div class="fixed top-1/4 -left-32 w-80 h-80 bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="fixed bottom-1/4 -right-32 w-96 h-96 bg-primary/15 rounded-full blur-[140px] pointer-events-none"></div>
+</body></html>

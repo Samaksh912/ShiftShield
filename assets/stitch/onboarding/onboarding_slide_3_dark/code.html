@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary": "#614100",
+              "tertiary": "#ffc96f",
+              "primary": "#ff915a",
+              "on-secondary-container": "#fff6f2",
+              "primary-fixed": "#ff7a31",
+              "primary-container": "#ff7a31",
+              "primary-fixed-dim": "#f76600",
+              "on-tertiary-container": "#553900",
+              "secondary": "#ff923c",
+              "on-secondary": "#4d2300",
+              "surface-tint": "#ff915a",
+              "tertiary-fixed": "#ffb627",
+              "surface-container-low": "#131313",
+              "on-surface": "#ffffff",
+              "inverse-on-surface": "#565555",
+              "surface-variant": "#262626",
+              "background": "#0e0e0e",
+              "surface-container-high": "#20201f",
+              "tertiary-fixed-dim": "#efa914",
+              "secondary-fixed-dim": "#ffb37e",
+              "on-primary-fixed": "#000000",
+              "inverse-primary": "#a24100",
+              "error-container": "#b92902",
+              "primary-dim": "#ff7526",
+              "on-secondary-fixed-variant": "#803f00",
+              "on-primary-fixed-variant": "#501c00",
+              "surface-dim": "#0e0e0e",
+              "secondary-container": "#954a00",
+              "on-background": "#ffffff",
+              "tertiary-container": "#ffb627",
+              "on-primary-container": "#411500",
+              "inverse-surface": "#fcf9f8",
+              "secondary-dim": "#ee8530",
+              "on-primary": "#531e00",
+              "surface-bright": "#2c2c2c",
+              "surface": "#0e0e0e",
+              "on-secondary-fixed": "#552800",
+              "on-tertiary-fixed": "#3a2600",
+              "on-surface-variant": "#adaaaa",
+              "surface-container": "#1a1a1a",
+              "secondary-fixed": "#ffc6a0",
+              "outline": "#767575",
+              "on-error-container": "#ffd2c8",
+              "surface-container-highest": "#262626",
+              "outline-variant": "#484847",
+              "on-tertiary-fixed-variant": "#604100",
+              "on-error": "#450900",
+              "error": "#ff7351",
+              "error-dim": "#d53d18",
+              "surface-container-lowest": "#000000",
+              "tertiary-dim": "#efa914"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-dot {
+            width: 2rem;
+            background-color: #ff915a;
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #ff915a 0%, #ff7a31 100%);
+        }
+        .glass-header {
+            background: rgba(14, 14, 14, 0.7);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary-fixed overflow-hidden">
+<!-- TopAppBar Shell (Onboarding Filter: Persistent Logo, No Navigation) -->
+<header class="fixed top-0 w-full z-50 glass-header flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="shield">shield</span>
+<span class="text-primary-fixed font-headline font-bold text-lg tracking-widest uppercase">IGNITE</span>
+</div>
+<div class="font-headline uppercase tracking-widest text-xs text-primary-fixed">Slide 03</div>
+</header>
+<main class="relative min-h-screen flex flex-col pt-20 px-6 pb-32">
+<!-- Visual Component: The "Active Shield" Kinetic Illustration -->
+<div class="flex-grow flex flex-col justify-center items-center">
+<div class="relative w-full max-w-sm aspect-square flex items-center justify-center">
+<!-- Kinetic Background Glow -->
+<div class="absolute inset-0 bg-primary/10 blur-[100px] rounded-full"></div>
+<!-- The Digital Wallet Layout -->
+<div class="relative w-72 h-96 bg-surface-container-low rounded-xl overflow-hidden shadow-2xl p-6 flex flex-col gap-6">
+<!-- Top Section -->
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="account_balance_wallet" data-weight="fill" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+</div>
+<div class="bg-surface-container-highest px-3 py-1 rounded-full">
+<span class="text-[10px] font-headline font-bold uppercase tracking-tighter text-on-surface-variant">Wallet Active</span>
+</div>
+</div>
+<!-- Payout Visualization -->
+<div class="space-y-4">
+<div class="text-on-surface-variant text-xs uppercase tracking-widest font-headline">Available Balance</div>
+<div class="font-headline text-5xl font-bold tracking-tighter text-on-surface flex items-baseline gap-1">
+<span class="text-primary text-2xl">$</span>
+<span>428.50</span>
+</div>
+</div>
+<!-- Bento Grid Info Snippets -->
+<div class="grid grid-cols-2 gap-3 flex-grow">
+<div class="bg-surface-container rounded-lg p-3 flex flex-col justify-between">
+<span class="text-[10px] font-bold text-primary uppercase">Recent</span>
+<span class="text-lg font-headline font-bold">+$124</span>
+</div>
+<div class="bg-surface-container rounded-lg p-3 flex flex-col justify-between">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Deliveries</span>
+<span class="text-lg font-headline font-bold">12</span>
+</div>
+</div>
+<!-- Transfer Action Overlay -->
+<div class="mt-auto bg-primary-gradient rounded-lg p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-on-primary-fixed/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-fixed text-sm" data-icon="bolt" data-weight="fill" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<span class="text-on-primary-fixed font-bold text-sm">Payout Sent</span>
+</div>
+<span class="material-symbols-outlined text-on-primary-fixed" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+<!-- Floating Kinetic Elements (Coins/Data) -->
+<div class="absolute -top-4 -right-4 w-20 h-20 bg-surface-container-highest rounded-xl flex items-center justify-center rotate-12 shadow-xl">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="payments">payments</span>
+</div>
+<div class="absolute bottom-10 -left-6 w-16 h-16 bg-surface-container-high rounded-xl flex items-center justify-center -rotate-12 shadow-xl border border-white/5">
+<span class="material-symbols-outlined text-secondary text-2xl" data-icon="credit_card">credit_card</span>
+</div>
+</div>
+</div>
+<!-- Typography & Content -->
+<div class="mt-12 text-left space-y-4 max-w-md mx-auto w-full">
+<h1 class="font-headline text-5xl font-extrabold tracking-tight leading-none text-on-surface">
+                Instant <br/> <span class="text-primary">Payouts.</span>
+</h1>
+<p class="text-on-surface-variant text-lg font-body leading-relaxed max-w-xs">
+                Finish a shift and get paid before you've even taken off your helmet. Real-time earnings for real-time hustle.
+            </p>
+</div>
+<!-- Pagination Shell -->
+<div class="mt-10 flex justify-start items-center gap-2 max-w-md mx-auto w-full">
+<div class="h-1.5 w-1.5 rounded-full bg-surface-container-highest"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-surface-container-highest"></div>
+<div class="h-1.5 active-dot rounded-full"></div>
+</div>
+</main>
+<!-- Bottom Action Area -->
+<div class="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background via-background/90 to-transparent z-50">
+<div class="max-w-md mx-auto w-full">
+<button class="w-full h-16 primary-gradient rounded-xl flex items-center justify-center gap-3 active:scale-[0.96] transition-all duration-200">
+<span class="text-on-primary-fixed font-headline font-bold text-lg uppercase tracking-wider">Get Started</span>
+<span class="material-symbols-outlined text-on-primary-fixed" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Background Imagery Decorative -->
+<div class="fixed inset-0 pointer-events-none -z-10 opacity-20">
+<img alt="" class="w-full h-full object-cover grayscale" data-alt="abstract close-up of dark carbon fiber texture with futuristic neon orange light trails reflecting on the surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIF_2CJxvTWKu29yCUjCJeRP5gddCzJHWTIqmpkODfxSN3-YLF5rW7tKIvAVyNHyYr4t4-VKreZt9uVdQqdqzDjVy01sEtoR0sBt4ARSv7-WnguY4jgGlYa6r_O8A2APWK-uiKmbA6l4fNPs3hy7HcKtQ9jBwMC20TjDKcAo2QeheUXhMMoe-NSb3GFRO29mCi5BkuOR9g7QDB6Jp7PbgCKlPJEg5gVVTNOZIj70AS39pWFfQtKQa7lM8mypYl1oCj7eHbYTukYcQ"/>
+</div>
+<!-- Bottom Nav Bar Replacement Logic: Onboarding suppress Shell, use Progress dots only -->
+<nav class="fixed bottom-0 w-full pb-10 hidden">
+<!-- Hidden as per Onboarding Suppression Rule -->
+</nav>
+</body></html>
