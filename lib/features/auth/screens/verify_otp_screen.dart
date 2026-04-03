@@ -5,6 +5,7 @@ import '../../../theme/app_colors.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/services/auth_service.dart';
 import 'rider_profile_screen.dart';
+import '../../dashboard/screens/main_layout.dart';
 
 class VerifyOtpScreen extends StatefulWidget {
   final String mobileNumber;
@@ -67,11 +68,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
           (route) => false,
         );
       } else {
-        // Returning user — rider profile exists, go straight to quote
-        // (Dashboard screen to be built later; for now go to QuoteScreen)
+        // Returning user — profile already exists, go to main layout
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const RiderProfileScreen()),
+          MaterialPageRoute(builder: (_) => const MainLayout()),
           (route) => false,
         );
       }

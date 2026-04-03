@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/app_colors.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/services/auth_service.dart';
-import '../../quote/screens/quote_screen.dart';
+import '../../dashboard/screens/main_layout.dart';
 
 class RiderProfileScreen extends StatefulWidget {
   const RiderProfileScreen({super.key});
@@ -151,7 +151,7 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
       if (!mounted) return;
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const QuoteScreen()),
+        MaterialPageRoute(builder: (_) => const MainLayout()),
         (route) => false,
       );
     } on ApiException catch (e) {
