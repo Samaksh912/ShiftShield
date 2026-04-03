@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Policy Management | Kinetic Horizon</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#ff915a",
+                        "inverse-primary": "#a24100",
+                        "surface-container-lowest": "#000000",
+                        "surface-container": "#1a1a1a",
+                        "tertiary-dim": "#efa914",
+                        "on-primary-fixed-variant": "#501c00",
+                        "on-tertiary": "#614100",
+                        "inverse-on-surface": "#565555",
+                        "error-dim": "#d53d18",
+                        "primary-dim": "#ff7526",
+                        "on-tertiary-fixed": "#3a2600",
+                        "tertiary": "#ffc96f",
+                        "outline-variant": "#484847",
+                        "on-tertiary-fixed-variant": "#604100",
+                        "on-background": "#ffffff",
+                        "on-error-container": "#ffd2c8",
+                        "primary-container": "#ff7a31",
+                        "on-tertiary-container": "#553900",
+                        "on-secondary-fixed": "#552800",
+                        "surface-tint": "#ff915a",
+                        "secondary-fixed": "#ffc6a0",
+                        "surface-dim": "#0e0e0e",
+                        "surface": "#0e0e0e",
+                        "on-primary-fixed": "#000000",
+                        "error-container": "#b92902",
+                        "tertiary-fixed-dim": "#efa914",
+                        "error": "#ff7351",
+                        "on-secondary": "#4d2300",
+                        "surface-container-high": "#20201f",
+                        "outline": "#767575",
+                        "surface-container-low": "#131313",
+                        "surface-container-highest": "#262626",
+                        "background": "#0e0e0e",
+                        "on-surface": "#ffffff",
+                        "inverse-surface": "#fcf9f8",
+                        "on-surface-variant": "#adaaaa",
+                        "on-primary": "#531e00",
+                        "tertiary-fixed": "#ffb627",
+                        "surface-bright": "#2c2c2c",
+                        "secondary": "#ff923c",
+                        "tertiary-container": "#ffb627",
+                        "secondary-fixed-dim": "#ffb37e",
+                        "on-error": "#450900",
+                        "on-secondary-fixed-variant": "#803f00",
+                        "on-secondary-container": "#fff6f2",
+                        "secondary-dim": "#ee8530",
+                        "secondary-container": "#954a00",
+                        "surface-variant": "#262626",
+                        "primary-fixed-dim": "#f76600",
+                        "primary-fixed": "#ff7a31",
+                        "on-primary-container": "#411500"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-line-rule { border: none !important; }
+        .tonal-shift { background-color: rgba(14, 14, 14, 0.7); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0e0e0e]/70 backdrop-blur-md flex justify-between items-center px-6 h-16 no-line-rule tonal-shift">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-orange-500" data-icon="shield">shield</span>
+<h1 class="text-orange-500 font-['Space_Grotesk'] tracking-tight uppercase font-bold">CURRENT COVERAGE</h1>
+</div>
+<button class="active:scale-95 duration-200 text-zinc-500 hover:text-orange-400 transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-2xl mx-auto">
+<!-- Current Policy Section -->
+<section class="mb-10">
+<div class="flex items-baseline justify-between mb-4">
+<h2 class="font-headline text-2xl font-bold tracking-tight text-on-surface">Current Policy</h2>
+<span class="font-label text-[10px] uppercase tracking-widest text-primary font-extrabold px-2 py-1 bg-primary/10 rounded-full">Active Protection</span>
+</div>
+<!-- Active Shield Card -->
+<div class="relative overflow-hidden bg-surface-container rounded-xl p-6 shadow-[0_8px_32px_rgba(255,145,90,0.08)]">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+<div class="flex justify-between items-start mb-8 relative z-10">
+<div>
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Validity Period</p>
+<h3 class="font-headline text-xl font-medium tracking-tight">Mar 30 - Apr 05</h3>
+</div>
+<div class="flex items-center gap-2 bg-primary-container text-on-primary-fixed px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label text-[10px] font-extrabold uppercase tracking-tighter">ACTIVE</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-6 mb-8 relative z-10">
+<div class="bg-surface-container-low p-4 rounded-xl">
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Coverage Shifts</p>
+<p class="font-headline font-semibold text-on-surface">Both (Lunch &amp; Dinner)</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl">
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Premium Paid</p>
+<p class="font-headline font-semibold text-primary">₹52</p>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-highest rounded-xl relative z-10">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="account_balance_wallet">account_balance_wallet</span>
+<div>
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Payout Cap</p>
+<p class="font-headline font-bold text-lg">₹5,000</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-4 rounded-xl bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed font-headline font-bold text-base tracking-tight shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+                    RENEW POLICY
+                    <span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Policy History Section -->
+<section>
+<h2 class="font-headline text-xl font-bold tracking-tight text-on-surface mb-6">Policy History</h2>
+<div class="space-y-4">
+<!-- History Item 1 -->
+<div class="bg-surface-container-low hover:bg-surface-container transition-all p-5 rounded-xl flex items-center justify-between group">
+<div class="flex items-center gap-5">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-zinc-500">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</div>
+<div>
+<h4 class="font-headline font-medium text-on-surface">Mar 23 - Mar 29</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-label text-[10px] text-zinc-500 uppercase tracking-widest">Lunch Shift</span>
+<span class="w-1 h-1 rounded-full bg-zinc-700"></span>
+<span class="font-label text-[10px] text-zinc-500 uppercase tracking-widest">Cap: ₹2,500</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline font-bold text-on-surface mb-1">₹33</p>
+<span class="font-label text-[9px] font-extrabold uppercase tracking-widest text-zinc-600 bg-zinc-900 px-2 py-0.5 rounded">EXPIRED</span>
+</div>
+</div>
+<!-- History Item 2 -->
+<div class="bg-surface-container-low hover:bg-surface-container transition-all p-5 rounded-xl flex items-center justify-between group">
+<div class="flex items-center gap-5">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-zinc-500">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</div>
+<div>
+<h4 class="font-headline font-medium text-on-surface">Mar 16 - Mar 22</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-label text-[10px] text-zinc-500 uppercase tracking-widest">Both Shifts</span>
+<span class="w-1 h-1 rounded-full bg-zinc-700"></span>
+<span class="font-label text-[10px] text-zinc-500 uppercase tracking-widest">Cap: ₹5,000</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline font-bold text-on-surface mb-1">₹52</p>
+<span class="font-label text-[9px] font-extrabold uppercase tracking-widest text-zinc-600 bg-zinc-900 px-2 py-0.5 rounded">EXPIRED</span>
+</div>
+</div>
+<!-- History Item 3 -->
+<div class="bg-surface-container-low hover:bg-surface-container transition-all p-5 rounded-xl flex items-center justify-between group">
+<div class="flex items-center gap-5">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-zinc-500">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</div>
+<div>
+<h4 class="font-headline font-medium text-on-surface">Mar 09 - Mar 15</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-label text-[10px] text-zinc-500 uppercase tracking-widest">Dinner Shift</span>
+<span class="w-1 h-1 rounded-full bg-zinc-700"></span>
+<span class="font-label text-[10px] text-zinc-500 uppercase tracking-widest">Cap: ₹2,500</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline font-bold text-on-surface mb-1">₹33</p>
+<span class="font-label text-[9px] font-extrabold uppercase tracking-widest text-zinc-600 bg-zinc-900 px-2 py-0.5 rounded">EXPIRED</span>
+</div>
+</div>
+</div>
+<!-- Descriptive Image / Brand Asset -->
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-[#131313] rounded-t-3xl shadow-[0_-8px_32px_rgba(255,106,0,0.12)] flex justify-around items-center px-4 py-3 no-line-rule">
+<!-- Policy (Active) -->
+<a class="flex flex-col items-center justify-center bg-[#1a1a1a] text-orange-500 rounded-2xl px-4 py-2 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="description" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="font-['Manrope'] text-[10px] uppercase font-bold tracking-widest">Policy</span>
+</a>
+<!-- Claims -->
+<a class="flex flex-col items-center justify-center text-zinc-600 px-4 py-2 hover:bg-zinc-800 transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="assignment_late">assignment_late</span>
+<span class="font-['Manrope'] text-[10px] uppercase font-bold tracking-widest">Claims</span>
+</a>
+<!-- Wallet -->
+<a class="flex flex-col items-center justify-center text-zinc-600 px-4 py-2 hover:bg-zinc-800 transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-['Manrope'] text-[10px] uppercase font-bold tracking-widest">Wallet</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-zinc-600 px-4 py-2 hover:bg-zinc-800 transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-['Manrope'] text-[10px] uppercase font-bold tracking-widest">Profile</span>
+</a>
+</nav>
+</body></html>

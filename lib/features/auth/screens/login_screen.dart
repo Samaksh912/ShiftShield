@@ -1,12 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/app_colors.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/services/auth_service.dart';
-import 'signup_screen.dart';
-import 'verify_otp_screen.dart';
+import '../../../core/router/app_router.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,12 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await ApiService.sendOtp(mobileNumber);
       await AuthService.savePhone(mobileNumber);
       if (!mounted) return;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VerifyOtpScreen(mobileNumber: mobileNumber),
-        ),
-      );
+      context.push(AppRoutes.verifyOtpPath(mobileNumber));
     } on ApiException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -391,11 +386,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => SignupScreen()),
-                                  );
-                                },
+                                   context.push(AppRoutes.signup);
+                                 },
                                 child: RichText(
                                   textAlign: TextAlign.center,
                                   text: TextSpan(

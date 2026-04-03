@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../theme/app_colors.dart';
+import '../../../core/router/app_router.dart';
 import '../widgets/primary_button.dart';
-import '../../auth/screens/login_screen.dart';
 import 'slide_1_dark.dart';
 import 'slide_2_dark.dart';
 import 'slide_3_dark.dart';
@@ -31,18 +32,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
+      context.go(AppRoutes.login);
     }
   }
 
   void _skipOnboarding() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => LoginScreen()),
-    );
+    context.go(AppRoutes.login);
   }
 
   @override

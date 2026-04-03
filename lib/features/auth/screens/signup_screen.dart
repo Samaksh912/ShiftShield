@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/app_colors.dart';
-import 'verify_otp_screen.dart';
+import '../../../core/router/app_router.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -18,12 +19,7 @@ class _SignupScreenState extends State<SignupScreen> {
     final mobileNumber = _mobileController.text;
     if (mobileNumber.length == 10) {
       // Proceed to OTP verification
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VerifyOtpScreen(mobileNumber: mobileNumber),
-        ),
-      );
+      context.push(AppRoutes.verifyOtpPath(mobileNumber));
     }
   }
 

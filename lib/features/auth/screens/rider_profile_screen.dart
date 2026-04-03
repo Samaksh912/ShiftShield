@@ -1,10 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/app_colors.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/services/auth_service.dart';
-import '../../dashboard/screens/main_layout.dart';
+import '../../../core/router/app_router.dart';
 
 class RiderProfileScreen extends StatefulWidget {
   const RiderProfileScreen({super.key});
@@ -149,11 +150,7 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
         'dinner_baseline': int.tryParse(_dinnerBaselineController.text) ?? 680,
       });
       if (!mounted) return;
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const MainLayout()),
-        (route) => false,
-      );
+      context.go(AppRoutes.dashboard);
     } on ApiException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -615,7 +612,7 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
                       Row(
                         children: [
                           GestureDetector(
-                            onTap: () => Navigator.pop(context),
+                            onTap: () => context.pop(),
                             child: Icon(
                               Icons.arrow_back,
                               color: context.colors.primary,

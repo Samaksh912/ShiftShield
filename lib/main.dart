@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'theme/app_theme.dart';
-import 'features/onboarding/screens/onboarding_screen.dart';
-import 'features/dashboard/screens/main_layout.dart';
 import 'core/config.dart';
 import 'core/services/auth_service.dart';
+import 'core/router/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // DEV BYPASS: skip auth entirely and jump straight to the dashboard
+  // DEV BYPASS: pre-save token so the auth guard lets us through to dashboard
   if (AppConfig.devBypassAuth) {
     await AuthService.saveToken(AppConfig.devJwt);
     await AuthService.savePhone('9876543210');
@@ -22,14 +21,12 @@ class IgniteApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'ShiftShield',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      // If bypass is active, start directly on the main layout (dashboard)
-      // otherwise go through the normal onboarding / login flow
-      home: AppConfig.devBypassAuth ? const MainLayout() : const OnboardingScreen(),
+      routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
     );
   }

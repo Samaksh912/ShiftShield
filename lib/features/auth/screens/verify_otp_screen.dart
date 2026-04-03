@@ -1,11 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/app_colors.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/services/auth_service.dart';
-import 'rider_profile_screen.dart';
-import '../../dashboard/screens/main_layout.dart';
+import '../../../core/router/app_router.dart';
 
 class VerifyOtpScreen extends StatefulWidget {
   final String mobileNumber;
@@ -62,18 +62,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       if (!mounted) return;
 
       if (isNewUser) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const RiderProfileScreen()),
-          (route) => false,
-        );
+        context.go(AppRoutes.riderProfile);
       } else {
         // Returning user — profile already exists, go to main layout
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const MainLayout()),
-          (route) => false,
-        );
+        context.go(AppRoutes.dashboard);
       }
     } on ApiException catch (e) {
       if (!mounted) return;
@@ -115,7 +107,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                       child: Row(
                         children: [
                           GestureDetector(
-                            onTap: () => Navigator.pop(context),
+                            onTap: () => context.pop(),
                             child: Icon(
                               Icons.arrow_back,
                               color: context.colors.primary,
