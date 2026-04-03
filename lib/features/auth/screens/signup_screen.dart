@@ -1,7 +1,7 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/app_colors.dart';
+import 'verify_otp_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -18,6 +18,12 @@ class _SignupScreenState extends State<SignupScreen> {
     final mobileNumber = _mobileController.text;
     if (mobileNumber.length == 10) {
       // Proceed to OTP verification
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VerifyOtpScreen(mobileNumber: mobileNumber),
+        ),
+      );
     }
   }
 
@@ -30,7 +36,7 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: context.colors.surface,
       body: Stack(
         children: [
           // Background Elements
@@ -44,14 +50,14 @@ class _SignupScreenState extends State<SignupScreen> {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppColors.primary.withOpacity(0.05),
-                    AppColors.primary.withOpacity(0.04),
-                    AppColors.primary.withOpacity(0.03),
-                    AppColors.primary.withOpacity(0.015),
-                    AppColors.primary.withOpacity(0.005),
-                    AppColors.primary.withOpacity(0.0),
+                    context.colors.primary.withOpacity(0.05),
+                    context.colors.primary.withOpacity(0.04),
+                    context.colors.primary.withOpacity(0.03),
+                    context.colors.primary.withOpacity(0.015),
+                    context.colors.primary.withOpacity(0.005),
+                    context.colors.primary.withOpacity(0.0),
                   ],
-                  stops: const [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+                  stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
                 ),
               ),
             ),
@@ -66,13 +72,13 @@ class _SignupScreenState extends State<SignupScreen> {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppColors.tertiary.withOpacity(0.05),
-                    AppColors.tertiary.withOpacity(0.04),
-                    AppColors.tertiary.withOpacity(0.03),
-                    AppColors.tertiary.withOpacity(0.015),
-                    AppColors.tertiary.withOpacity(0.0),
+                    context.colors.tertiary.withOpacity(0.05),
+                    context.colors.tertiary.withOpacity(0.04),
+                    context.colors.tertiary.withOpacity(0.03),
+                    context.colors.tertiary.withOpacity(0.015),
+                    context.colors.tertiary.withOpacity(0.0),
                   ],
-                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+                  stops: [0.0, 0.25, 0.5, 0.75, 1.0],
                 ),
               ),
             ),
@@ -84,15 +90,15 @@ class _SignupScreenState extends State<SignupScreen> {
                 context,
               ).copyWith(overscroll: false),
               child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(
+                physics: BouncingScrollPhysics(),
+                padding: EdgeInsets.symmetric(
                   horizontal: 24.0,
                   vertical: 16.0,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
 
                     // Back Button (Top Left)
                     Align(
@@ -101,16 +107,16 @@ class _SignupScreenState extends State<SignupScreen> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: AppColors.surfaceContainerHigh,
+                          color: context.colors.surfaceContainerHigh,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: AppColors.outlineVariant.withOpacity(0.1),
+                            color: context.colors.outlineVariant.withOpacity(0.1),
                           ),
                         ),
                         child: IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.arrow_back,
-                            color: AppColors.onSurface,
+                            color: context.colors.onSurface,
                             size: 20,
                           ),
                           onPressed: () => Navigator.pop(context),
@@ -132,12 +138,12 @@ class _SignupScreenState extends State<SignupScreen> {
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
                                 colors: [
-                                  AppColors.primary.withOpacity(0.05),
-                                  AppColors.primary.withOpacity(0.04),
-                                  AppColors.primary.withOpacity(0.02),
-                                  AppColors.primary.withOpacity(0.0),
+                                  context.colors.primary.withOpacity(0.05),
+                                  context.colors.primary.withOpacity(0.04),
+                                  context.colors.primary.withOpacity(0.02),
+                                  context.colors.primary.withOpacity(0.0),
                                 ],
-                                stops: const [0.0, 0.3, 0.6, 1.0],
+                                stops: [0.0, 0.3, 0.6, 1.0],
                               ),
                             ),
                           ),
@@ -156,7 +162,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        AppColors.primary.withOpacity(0.4),
+                                        context.colors.primary.withOpacity(0.4),
                                         Colors.transparent,
                                       ],
                                     ),
@@ -173,7 +179,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        AppColors.primary.withOpacity(0.3),
+                                        context.colors.primary.withOpacity(0.3),
                                         Colors.transparent,
                                       ],
                                     ),
@@ -190,7 +196,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        AppColors.primary.withOpacity(0.2),
+                                        context.colors.primary.withOpacity(0.2),
                                         Colors.transparent,
                                       ],
                                     ),
@@ -201,11 +207,11 @@ class _SignupScreenState extends State<SignupScreen> {
                               // Icon
                               Icon(
                                 Icons.moped,
-                                color: AppColors.primary,
+                                color: context.colors.primary,
                                 size: 120,
                                 shadows: [
                                   BoxShadow(
-                                    color: AppColors.primary.withOpacity(0.3),
+                                    color: context.colors.primary.withOpacity(0.3),
                                     blurRadius: 15,
                                     spreadRadius: 2,
                                   ),
@@ -217,7 +223,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
 
                     // Headings
                     RichText(
@@ -226,49 +232,49 @@ class _SignupScreenState extends State<SignupScreen> {
                           fontSize: 40,
                           fontWeight: FontWeight.w800,
                           letterSpacing: -1.0,
-                          color: AppColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                         children: [
-                          const TextSpan(text: 'JOIN THE '),
+                          TextSpan(text: 'JOIN THE '),
                           TextSpan(
                             text: 'FLEET',
                             style: GoogleFonts.spaceGrotesk(
-                              color: AppColors.primary,
+                              color: context.colors.primary,
                               fontStyle: FontStyle.italic,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Text(
                       'Enter your mobile number to get started with instant protection.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.manrope(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.onSurfaceVariant,
+                        color: context.colors.onSurfaceVariant,
                         height: 1.5,
                       ),
                     ),
 
-                    const SizedBox(height: 48),
+                    SizedBox(height: 48),
 
                     // Signup Card
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(32),
+                      padding: EdgeInsets.all(32),
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceContainerLow,
+                        color: context.colors.surfaceContainerLow,
                         borderRadius: BorderRadius.circular(32),
-                        border: const Border(
+                        border: Border(
                           top: BorderSide(color: Colors.white10, width: 1),
                         ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.5),
                             blurRadius: 40,
-                            offset: const Offset(0, 20),
+                            offset: Offset(0, 20),
                           ),
                         ],
                       ),
@@ -282,13 +288,13 @@ class _SignupScreenState extends State<SignupScreen> {
                               gradient: LinearGradient(
                                 colors: [
                                   Colors.transparent,
-                                  AppColors.primary.withOpacity(0.3),
+                                  context.colors.primary.withOpacity(0.3),
                                   Colors.transparent,
                                 ],
                               ),
                             ),
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24),
 
                           Text(
                             'MOBILE NUMBER',
@@ -296,22 +302,22 @@ class _SignupScreenState extends State<SignupScreen> {
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 2.0,
-                              color: AppColors.onSurfaceVariant,
+                              color: context.colors.onSurfaceVariant,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
 
                           // Input Field
                           Row(
                             children: [
                               Container(
                                 height: 64,
-                                padding: const EdgeInsets.symmetric(
+                                padding: EdgeInsets.symmetric(
                                   horizontal: 16,
                                 ),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                  color: AppColors.surfaceContainer,
+                                  color: context.colors.surfaceContainer,
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: Colors.white.withOpacity(0.05),
@@ -322,16 +328,16 @@ class _SignupScreenState extends State<SignupScreen> {
                                   style: GoogleFonts.spaceGrotesk(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
-                                    color: AppColors.primary,
+                                    color: context.colors.primary,
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 12),
+                              SizedBox(width: 12),
                               Expanded(
                                 child: Container(
                                   height: 64,
                                   decoration: BoxDecoration(
-                                    color: AppColors.surfaceContainer,
+                                    color: context.colors.surfaceContainer,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: TextField(
@@ -342,19 +348,19 @@ class _SignupScreenState extends State<SignupScreen> {
                                       fontSize: 20,
                                       fontWeight: FontWeight.w500,
                                       letterSpacing: 2.0,
-                                      color: AppColors.onSurface,
+                                      color: context.colors.onSurface,
                                     ),
                                     decoration: InputDecoration(
                                       counterText: '',
                                       border: InputBorder.none,
                                       contentPadding:
-                                          const EdgeInsets.symmetric(
+                                          EdgeInsets.symmetric(
                                             horizontal: 24,
                                             vertical: 20,
                                           ),
                                       hintText: '98765 43210',
                                       hintStyle: GoogleFonts.spaceGrotesk(
-                                        color: AppColors.outline.withOpacity(
+                                        color: context.colors.outline.withOpacity(
                                           0.4,
                                         ),
                                       ),
@@ -364,7 +370,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 32),
+                          SizedBox(height: 32),
 
                           // CTA Section
                           SizedBox(
@@ -378,14 +384,14 @@ class _SignupScreenState extends State<SignupScreen> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 elevation: 8,
-                                shadowColor: AppColors.primary.withOpacity(0.2),
+                                shadowColor: context.colors.primary.withOpacity(0.2),
                               ),
                               child: Ink(
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
+                                  gradient: LinearGradient(
                                     colors: [
-                                      AppColors.primary,
-                                      AppColors.primaryContainer,
+                                      context.colors.primary,
+                                      context.colors.primaryContainer,
                                     ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
@@ -403,13 +409,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                           fontSize: 18,
                                           fontWeight: FontWeight.w900,
                                           letterSpacing: 2.0,
-                                          color: AppColors.onPrimaryFixed,
+                                          color: context.colors.onPrimaryFixed,
                                         ),
                                       ),
-                                      const SizedBox(width: 12),
-                                      const Icon(
+                                      SizedBox(width: 12),
+                                      Icon(
                                         Icons.arrow_forward,
-                                        color: AppColors.onPrimaryFixed,
+                                        color: context.colors.onPrimaryFixed,
                                       ),
                                     ],
                                   ),
@@ -418,7 +424,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24),
 
                           // Footer inside card
                           Center(
@@ -428,13 +434,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                   children: [
                                     Expanded(
                                       child: Divider(
-                                        color: AppColors.outline.withOpacity(
+                                        color: context.colors.outline.withOpacity(
                                           0.1,
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                         horizontal: 16,
                                       ),
                                       child: Text(
@@ -443,7 +449,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                           fontSize: 10,
                                           fontWeight: FontWeight.w900,
                                           letterSpacing: 3.0,
-                                          color: AppColors.outline.withOpacity(
+                                          color: context.colors.outline.withOpacity(
                                             0.5,
                                           ),
                                         ),
@@ -451,14 +457,14 @@ class _SignupScreenState extends State<SignupScreen> {
                                     ),
                                     Expanded(
                                       child: Divider(
-                                        color: AppColors.outline.withOpacity(
+                                        color: context.colors.outline.withOpacity(
                                           0.1,
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 16),
+                                SizedBox(height: 16),
                                 Text(
                                   "By continuing, you agree to our Terms and Privacy Policy.",
                                   textAlign: TextAlign.center,
@@ -466,7 +472,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     fontSize: 10,
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: 1.0,
-                                    color: AppColors.onSurfaceVariant,
+                                    color: context.colors.onSurfaceVariant,
                                   ),
                                 ),
                               ],
@@ -476,7 +482,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32),
 
                     // Login Link
                     GestureDetector(
@@ -488,16 +494,16 @@ class _SignupScreenState extends State<SignupScreen> {
                         text: TextSpan(
                           style: GoogleFonts.manrope(
                             fontSize: 14,
-                            color: AppColors.onSurfaceVariant,
+                            color: context.colors.onSurfaceVariant,
                           ),
                           children: [
-                            const TextSpan(text: "Already have an account? "),
+                            TextSpan(text: "Already have an account? "),
                             TextSpan(
                               text: "Log In",
                               style: GoogleFonts.manrope(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w800,
-                                color: AppColors.primary,
+                                color: context.colors.primary,
                               ),
                             ),
                           ],
@@ -505,7 +511,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 48),
+                    SizedBox(height: 48),
 
                     // Footer Decorative
                     Row(
@@ -513,22 +519,22 @@ class _SignupScreenState extends State<SignupScreen> {
                       children: [
                         Icon(
                           Icons.verified_user,
-                          color: AppColors.primary.withOpacity(0.3),
+                          color: context.colors.primary.withOpacity(0.3),
                           size: 20,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Text(
                           'SHIELD SECURE PROTOCOL',
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 12,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2.0,
-                            color: AppColors.onSurface.withOpacity(0.3),
+                            color: context.colors.onSurface.withOpacity(0.3),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
                   ],
                 ),
               ),

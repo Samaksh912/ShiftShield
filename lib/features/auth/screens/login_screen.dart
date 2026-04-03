@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/app_colors.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/services/auth_service.dart';
 import 'signup_screen.dart';
+import 'verify_otp_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,12 +17,35 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _mobileController = TextEditingController();
+  bool _isLoading = false;
 
-  void _getOtp() {
-    // Supabase Mobile Auth Integration point
-    final mobileNumber = _mobileController.text;
-    if (mobileNumber.length == 10) {
-      // Proceed to OTP verification
+  Future<void> _getOtp() async {
+    final mobileNumber = _mobileController.text.trim();
+    if (mobileNumber.length != 10) return;
+
+    setState(() => _isLoading = true);
+    try {
+      await ApiService.sendOtp(mobileNumber);
+      await AuthService.savePhone(mobileNumber);
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VerifyOtpScreen(mobileNumber: mobileNumber),
+        ),
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message), backgroundColor: Colors.red.shade700),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not reach server. Is the backend running?'), backgroundColor: Colors.red),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -32,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: context.colors.surface,
       body: Stack(
         children: [
           // Background Elements
@@ -46,14 +72,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppColors.primary.withOpacity(0.05),
-                    AppColors.primary.withOpacity(0.04),
-                    AppColors.primary.withOpacity(0.03),
-                    AppColors.primary.withOpacity(0.015),
-                    AppColors.primary.withOpacity(0.005),
-                    AppColors.primary.withOpacity(0.0),
+                    context.colors.primary.withOpacity(0.05),
+                    context.colors.primary.withOpacity(0.04),
+                    context.colors.primary.withOpacity(0.03),
+                    context.colors.primary.withOpacity(0.015),
+                    context.colors.primary.withOpacity(0.005),
+                    context.colors.primary.withOpacity(0.0),
                   ],
-                  stops: const [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+                  stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
                 ),
               ),
             ),
@@ -68,13 +94,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppColors.tertiary.withOpacity(0.05),
-                    AppColors.tertiary.withOpacity(0.04),
-                    AppColors.tertiary.withOpacity(0.03),
-                    AppColors.tertiary.withOpacity(0.015),
-                    AppColors.tertiary.withOpacity(0.0),
+                    context.colors.tertiary.withOpacity(0.05),
+                    context.colors.tertiary.withOpacity(0.04),
+                    context.colors.tertiary.withOpacity(0.03),
+                    context.colors.tertiary.withOpacity(0.015),
+                    context.colors.tertiary.withOpacity(0.0),
                   ],
-                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+                  stops: [0.0, 0.25, 0.5, 0.75, 1.0],
                 ),
               ),
             ),
@@ -84,12 +110,12 @@ class _LoginScreenState extends State<LoginScreen> {
             child: ScrollConfiguration(
               behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
               child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   
                   // Back Button (Top Left)
                   Align(
@@ -98,12 +124,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceContainerHigh,
+                        color: context.colors.surfaceContainerHigh,
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.outlineVariant.withOpacity(0.1)),
+                        border: Border.all(color: context.colors.outlineVariant.withOpacity(0.1)),
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back, color: AppColors.onSurface, size: 20),
+                        icon: Icon(Icons.arrow_back, color: context.colors.onSurface, size: 20),
                         onPressed: () => Navigator.pop(context),
                         padding: EdgeInsets.zero,
                       ),
@@ -123,12 +149,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: BoxDecoration(
                             gradient: RadialGradient(
                               colors: [
-                                AppColors.primary.withOpacity(0.12),
-                                AppColors.primary.withOpacity(0.08),
-                                AppColors.primary.withOpacity(0.04),
-                                AppColors.primary.withOpacity(0.0),
+                                context.colors.primary.withOpacity(0.12),
+                                context.colors.primary.withOpacity(0.08),
+                                context.colors.primary.withOpacity(0.04),
+                                context.colors.primary.withOpacity(0.0),
                               ],
-                              stops: const [0.0, 0.4, 0.7, 1.0],
+                              stops: [0.0, 0.4, 0.7, 1.0],
                             ),
                           ),
                         ),
@@ -138,12 +164,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: BoxDecoration(
                             gradient: RadialGradient(
                               colors: [
-                                AppColors.primary.withOpacity(0.18),
-                                AppColors.primary.withOpacity(0.10),
-                                AppColors.primary.withOpacity(0.05),
-                                AppColors.primary.withOpacity(0.0),
+                                context.colors.primary.withOpacity(0.18),
+                                context.colors.primary.withOpacity(0.10),
+                                context.colors.primary.withOpacity(0.05),
+                                context.colors.primary.withOpacity(0.0),
                               ],
-                              stops: const [0.0, 0.4, 0.7, 1.0],
+                              stops: [0.0, 0.4, 0.7, 1.0],
                             ),
                           ),
                         ),
@@ -160,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                   
                   // Headings
                   RichText(
@@ -169,49 +195,49 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 40,
                         fontWeight: FontWeight.w800,
                         letterSpacing: -1.0,
-                        color: AppColors.onSurface,
+                        color: context.colors.onSurface,
                       ),
                       children: [
-                        const TextSpan(text: 'WELCOME '),
+                        TextSpan(text: 'WELCOME '),
                         TextSpan(
                           text: 'BACK',
                           style: GoogleFonts.spaceGrotesk(
-                            color: AppColors.primary,
+                            color: context.colors.primary,
                             fontStyle: FontStyle.italic,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     'Enter your mobile number to sign in with instant protection.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.manrope(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.onSurfaceVariant,
+                      color: context.colors.onSurfaceVariant,
                       height: 1.5,
                     ),
                   ),
                   
-                  const SizedBox(height: 48),
+                  SizedBox(height: 48),
                   
                   // Login Card
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(32),
+                    padding: EdgeInsets.all(32),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceContainerLow,
+                      color: context.colors.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(32),
-                      border: const Border(
+                      border: Border(
                         top: BorderSide(color: Colors.white10, width: 1),
                       ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.5),
                           blurRadius: 40,
-                          offset: const Offset(0, 20),
+                          offset: Offset(0, 20),
                         ),
                       ],
                     ),
@@ -225,13 +251,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             gradient: LinearGradient(
                               colors: [
                                 Colors.transparent,
-                                AppColors.primary.withOpacity(0.3),
+                                context.colors.primary.withOpacity(0.3),
                                 Colors.transparent,
                               ],
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24),
                         
                         Text(
                           'MOBILE NUMBER',
@@ -239,20 +265,20 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2.0,
-                            color: AppColors.onSurfaceVariant,
+                            color: context.colors.onSurfaceVariant,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         
                         // Input Field
                         Row(
                           children: [
                             Container(
                               height: 64,
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: EdgeInsets.symmetric(horizontal: 16),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: AppColors.surfaceContainer,
+                                color: context.colors.surfaceContainer,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(color: Colors.white.withOpacity(0.05)),
                               ),
@@ -261,16 +287,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                 style: GoogleFonts.spaceGrotesk(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
-                                  color: AppColors.primary,
+                                  color: context.colors.primary,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12),
                             Expanded(
                               child: Container(
                                 height: 64,
                                 decoration: BoxDecoration(
-                                  color: AppColors.surfaceContainer,
+                                  color: context.colors.surfaceContainer,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: TextField(
@@ -281,15 +307,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                     fontSize: 20,
                                     fontWeight: FontWeight.w500,
                                     letterSpacing: 2.0,
-                                    color: AppColors.onSurface,
+                                    color: context.colors.onSurface,
                                   ),
                                   decoration: InputDecoration(
                                     counterText: '',
                                     border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                                     hintText: '98765 43210',
                                     hintStyle: GoogleFonts.spaceGrotesk(
-                                      color: AppColors.outline.withOpacity(0.4),
+                                      color: context.colors.outline.withOpacity(0.4),
                                     ),
                                   ),
                                 ),
@@ -297,26 +323,26 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32),
                         
                         // CTA Section
                         SizedBox(
                           width: double.infinity,
                           height: 64,
                           child: ElevatedButton(
-                            onPressed: _getOtp,
+                            onPressed: _isLoading ? null : _getOtp,
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               elevation: 8,
-                              shadowColor: AppColors.primary.withOpacity(0.2),
+                              shadowColor: context.colors.primary.withOpacity(0.2),
                             ),
                             child: Ink(
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [AppColors.primary, AppColors.primaryContainer],
+                                gradient: LinearGradient(
+                                  colors: [context.colors.primary, context.colors.primaryContainer],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
@@ -324,31 +350,40 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               child: Container(
                                 alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'GET OTP',
-                                      style: GoogleFonts.spaceGrotesk(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w900,
-                                        letterSpacing: 2.0,
-                                        color: AppColors.onPrimaryFixed,
+                                child: _isLoading
+                                    ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'GET OTP',
+                                            style: GoogleFonts.spaceGrotesk(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w900,
+                                              letterSpacing: 2.0,
+                                              color: context.colors.onPrimaryFixed,
+                                            ),
+                                          ),
+                                          SizedBox(width: 12),
+                                          Icon(
+                                            Icons.arrow_forward,
+                                            color: context.colors.onPrimaryFixed,
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    const Icon(
-                                      Icons.arrow_forward,
-                                      color: AppColors.onPrimaryFixed,
-                                    ),
-                                  ],
-                                ),
                               ),
                             ),
                           ),
                         ),
                         
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24),
                         
                         // Footer inside card
                         Center(
@@ -358,7 +393,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 onTap: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (_) => const SignupScreen()),
+                                    MaterialPageRoute(builder: (_) => SignupScreen()),
                                   );
                                 },
                                 child: RichText(
@@ -366,39 +401,39 @@ class _LoginScreenState extends State<LoginScreen> {
                                   text: TextSpan(
                                     style: GoogleFonts.manrope(
                                       fontSize: 14,
-                                      color: AppColors.onSurfaceVariant,
+                                      color: context.colors.onSurfaceVariant,
                                     ),
                                     children: [
-                                      const TextSpan(text: "Don't have an account? "),
+                                      TextSpan(text: "Don't have an account? "),
                                       TextSpan(
                                         text: "Join the Fleet",
                                         style: GoogleFonts.manrope(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w800,
-                                          color: AppColors.primary,
+                                          color: context.colors.primary,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24),
                               Row(
                                 children: [
-                                  Expanded(child: Divider(color: AppColors.outline.withOpacity(0.1))),
+                                  Expanded(child: Divider(color: context.colors.outline.withOpacity(0.1))),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    padding: EdgeInsets.symmetric(horizontal: 16),
                                     child: Text(
                                       'SHIELD PROTECTION',
                                       style: GoogleFonts.manrope(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: 3.0,
-                                        color: AppColors.outline.withOpacity(0.5),
+                                        color: context.colors.outline.withOpacity(0.5),
                                       ),
                                     ),
                                   ),
-                                  Expanded(child: Divider(color: AppColors.outline.withOpacity(0.1))),
+                                  Expanded(child: Divider(color: context.colors.outline.withOpacity(0.1))),
                                 ],
                               ),
                             ],
@@ -408,26 +443,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   
-                  const SizedBox(height: 48),
+                  SizedBox(height: 48),
                   
                   // Footer Decorative
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.verified_user, color: AppColors.primary.withOpacity(0.3), size: 20),
-                      const SizedBox(width: 8),
+                      Icon(Icons.verified_user, color: context.colors.primary.withOpacity(0.3), size: 20),
+                      SizedBox(width: 8),
                       Text(
                         'SHIELD SECURE PROTOCOL',
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 12,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2.0,
-                          color: AppColors.onSurface.withOpacity(0.3),
+                          color: context.colors.onSurface.withOpacity(0.3),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                 ],
               ),
             ),

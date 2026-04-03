@@ -27,7 +27,7 @@ class _PrimaryButtonState extends State<PrimaryButton>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 100),
+      duration: Duration(milliseconds: 100),
     );
     _scaleAnimation = Tween<double>(
       begin: 1.0,
@@ -62,16 +62,16 @@ class _PrimaryButtonState extends State<PrimaryButton>
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24), // xl (1.5rem)
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [AppColors.primary, AppColors.primaryContainer],
+              colors: [context.colors.primary, context.colors.primaryContainer],
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(0.2),
+                color: context.colors.primary.withOpacity(0.2),
                 blurRadius: 24,
-                offset: const Offset(0, 8),
+                offset: Offset(0, 8),
               ),
             ],
           ),
@@ -81,14 +81,14 @@ class _PrimaryButtonState extends State<PrimaryButton>
               Text(
                 widget.text.toUpperCase(),
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: AppColors.onPrimaryFixed,
+                  color: context.colors.onPrimaryFixed,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 2.0,
                 ),
               ),
               if (widget.icon != null) ...[
-                const SizedBox(width: 12),
-                Icon(widget.icon, color: AppColors.onPrimaryFixed),
+                SizedBox(width: 12),
+                Icon(widget.icon, color: context.colors.onPrimaryFixed),
               ],
             ],
           ),

@@ -26,35 +26,35 @@ class Slide1Dark extends StatelessWidget {
           // Content Layer
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end, // pushes to bottom
                 children: [
                   // VITAL STATUS chip
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: AppColors.primary,
+                      color: context.colors.primary,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       "VITAL STATUS",
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppColors.onPrimaryFixed,
+                            color: context.colors.onPrimaryFixed,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.5,
                             fontSize: 10,
                           ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   
                   // Headline
                   Text(
                     "Earn Protection",
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          color: AppColors.onSurface,
+                          color: context.colors.onSurface,
                           fontWeight: FontWeight.w800,
                           height: 1.1,
                           letterSpacing: -1.0,
@@ -63,13 +63,13 @@ class Slide1Dark extends StatelessWidget {
                   Text(
                     "While You Ride",
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          color: AppColors.primary,
+                          color: context.colors.primary,
                           fontWeight: FontWeight.w800,
                           height: 1.1,
                           letterSpacing: -1.0,
                         ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   
                   // Subtitle
                   Row(
@@ -79,7 +79,7 @@ class Slide1Dark extends StatelessWidget {
                         child: Text(
                           "Dynamic coverage that activates\nthe second you log on to your\ndelivery app.",
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: AppColors.onSurfaceVariant,
+                                color: context.colors.onSurfaceVariant,
                                 height: 1.5,
                               ),
                         ),
@@ -90,27 +90,27 @@ class Slide1Dark extends StatelessWidget {
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
-                          color: AppColors.surfaceContainerLow,
+                          color: context.colors.surfaceContainerLow,
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white.withOpacity(0.05)),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.5),
                               blurRadius: 10,
-                              offset: const Offset(0, 4),
+                              offset: Offset(0, 4),
                             ),
                           ],
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.brightness_medium,
-                          color: AppColors.primary,
+                          color: context.colors.primary,
                           size: 20,
                         ),
                       ),
                     ],
                   ),
                   
-                  const SizedBox(height: 140), // Leaves space for the bottom navigation/button
+                  SizedBox(height: 140), // Leaves space for the bottom navigation/button
                 ],
               ),
             ),

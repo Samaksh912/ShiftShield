@@ -13,7 +13,9 @@ class IgniteApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Ignite Onboarding',
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       home: const OnboardingScreen(),
       debugShowCheckedModeBanner: false,
     );

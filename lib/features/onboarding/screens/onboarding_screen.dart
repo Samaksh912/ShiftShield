@@ -27,13 +27,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (_currentPage < 2) {
       _pageController.animateToPage(
         _currentPage + 1,
-        duration: const Duration(milliseconds: 300),
+        duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        MaterialPageRoute(builder: (_) => LoginScreen()),
       );
     }
   }
@@ -41,14 +41,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _skipOnboarding() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      MaterialPageRoute(builder: (_) => LoginScreen()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: context.colors.surface,
       body: Stack(
         children: [
           // The sliding content
@@ -59,7 +59,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 _currentPage = index;
               });
             },
-            children: const [
+            children: [
               Slide1Dark(),
               Slide2Dark(),
               Slide3Dark(),
@@ -74,14 +74,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: SafeArea(
               bottom: false,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       "HORIZON",
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColors.primary,
+                        color: context.colors.primary,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.0,
                       ),
@@ -91,7 +91,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       child: Text(
                         "SKIP",
                         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: AppColors.onSurfaceVariant,
+                          color: context.colors.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.5,
                         ),
@@ -109,17 +109,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.only(left: 24, right: 24, top: 40, bottom: 40),
+              padding: EdgeInsets.only(left: 24, right: 24, top: 40, bottom: 40),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    AppColors.surface,
-                    AppColors.surface.withAlpha(230),
+                    context.colors.surface,
+                    context.colors.surface.withAlpha(230),
                     Colors.transparent,
                   ],
-                  stops: const [0.0, 0.6, 1.0],
+                  stops: [0.0, 0.6, 1.0],
                 ),
               ),
               child: SafeArea(
@@ -134,15 +134,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       children: List.generate(3, (index) {
                         final isActive = _currentPage == index;
                         return Container(
-                          margin: const EdgeInsets.only(right: 8),
+                          margin: EdgeInsets.only(right: 8),
                           height: 4,
                           width: isActive ? 32 : 8,
                           decoration: BoxDecoration(
-                            color: isActive ? AppColors.primary : AppColors.surfaceContainerHighest,
+                            color: isActive ? context.colors.primary : context.colors.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(2),
                             boxShadow: isActive ? [
                               BoxShadow(
-                                color: AppColors.primary.withAlpha(76), // ~0.3 opacity
+                                color: context.colors.primary.withAlpha(76), // ~0.3 opacity
                                 blurRadius: 8,
                               )
                             ] : [],
@@ -150,7 +150,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         );
                       }),
                     ),
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32),
                     // Primary Action
                     PrimaryButton(
                       // Real app context: If it's the 1st slide mockup shows 'GET STARTED' 

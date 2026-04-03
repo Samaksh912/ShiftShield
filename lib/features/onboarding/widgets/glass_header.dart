@@ -15,9 +15,9 @@ class GlassHeader extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
           height: 64,
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(horizontal: 24),
           decoration: BoxDecoration(
-            color: AppColors.surface.withOpacity(0.7),
+            color: context.colors.surface.withOpacity(0.7),
             border: Border(
               bottom: BorderSide(
                 color: Colors.white.withOpacity(0.05),
@@ -30,16 +30,16 @@ class GlassHeader extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.shield,
-                    color: AppColors.primaryContainer,
+                    color: context.colors.primaryContainer,
                     size: 20,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     title.toUpperCase(),
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: AppColors.primaryContainer,
+                      color: context.colors.primaryContainer,
                       letterSpacing: 2.0,
                       fontWeight: FontWeight.w800,
                     ),
@@ -49,7 +49,7 @@ class GlassHeader extends StatelessWidget {
               Text(
                 subtitle.toUpperCase(),
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.primaryContainer,
+                  color: context.colors.primaryContainer,
                   letterSpacing: 2.0,
                 ),
               ),

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-variant": "#262626",
+                        "inverse-primary": "#a24100",
+                        "inverse-surface": "#fcf9f8",
+                        "on-primary-container": "#411500",
+                        "primary-container": "#ff7a31",
+                        "on-secondary": "#4d2300",
+                        "primary-fixed-dim": "#f76600",
+                        "primary": "#ff915a",
+                        "on-surface": "#ffffff",
+                        "on-primary-fixed-variant": "#501c00",
+                        "error-dim": "#d53d18",
+                        "error": "#ff7351",
+                        "tertiary-dim": "#efa914",
+                        "surface-bright": "#2c2c2c",
+                        "on-tertiary": "#614100",
+                        "on-primary-fixed": "#000000",
+                        "on-primary": "#531e00",
+                        "on-secondary-fixed": "#552800",
+                        "surface-dim": "#0e0e0e",
+                        "surface-container": "#1a1a1a",
+                        "on-tertiary-fixed": "#3a2600",
+                        "on-error": "#450900",
+                        "tertiary": "#ffc96f",
+                        "tertiary-fixed": "#ffb627",
+                        "outline": "#767575",
+                        "tertiary-container": "#ffb627",
+                        "secondary-fixed-dim": "#ffb37e",
+                        "on-background": "#ffffff",
+                        "primary-dim": "#ff7526",
+                        "outline-variant": "#484847",
+                        "surface-container-lowest": "#000000",
+                        "on-secondary-container": "#fff6f2",
+                        "inverse-on-surface": "#565555",
+                        "surface-tint": "#ff915a",
+                        "on-error-container": "#ffd2c8",
+                        "secondary-fixed": "#ffc6a0",
+                        "tertiary-fixed-dim": "#efa914",
+                        "surface-container-highest": "#262626",
+                        "on-surface-variant": "#adaaaa",
+                        "error-container": "#b92902",
+                        "secondary": "#ff923c",
+                        "surface": "#0e0e0e",
+                        "on-secondary-fixed-variant": "#803f00",
+                        "secondary-dim": "#ee8530",
+                        "background": "#0e0e0e",
+                        "primary-fixed": "#ff7a31",
+                        "surface-container-high": "#20201f",
+                        "on-tertiary-fixed-variant": "#604100",
+                        "on-tertiary-container": "#553900",
+                        "surface-container-low": "#131313",
+                        "secondary-container": "#954a00"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-glow {
+            box-shadow: 0px 0px 40px -10px rgba(255, 145, 90, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-dim text-on-surface font-body selection:bg-primary selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0e0e0e]/70 backdrop-blur-md">
+<nav class="flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-orange-500 cursor-pointer hover:opacity-80 transition-opacity active:scale-95 duration-200">arrow_back</span>
+<h1 class="font-['Space_Grotesk'] font-bold text-xl uppercase tracking-wider text-orange-500">Choose Your Plan</h1>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">help_outline</span>
+</div>
+</nav>
+</header>
+<main class="pt-24 pb-40 px-6 max-w-lg mx-auto">
+<!-- Hero Section -->
+<div class="mb-10">
+<div class="inline-flex items-center gap-2 bg-primary-container/10 px-3 py-1 rounded-full mb-4">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary">Active Protection</span>
+</div>
+<h2 class="font-headline text-4xl font-bold leading-tight mb-2">PICK YOUR <br/><span class="text-primary">SHIELD</span></h2>
+<p class="text-on-surface-variant font-medium text-sm">Flexible coverage for every shift you ride.</p>
+</div>
+<!-- Plan Selection Grid -->
+<div class="grid grid-cols-1 gap-6">
+<!-- Basic Plan Card -->
+<div class="group relative flex flex-col p-6 rounded-[2rem] bg-surface-container-low transition-all duration-300 hover:bg-surface-container border-2 border-transparent active:scale-[0.98]">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="font-headline text-2xl font-bold tracking-tight mb-1">Basic</h3>
+<div class="flex items-baseline gap-1">
+<span class="text-3xl font-headline font-bold text-on-surface">₹33</span>
+<span class="text-on-surface-variant text-sm font-bold uppercase tracking-tighter">/ shift</span>
+</div>
+</div>
+<div class="w-12 h-12 rounded-2xl bg-surface-container-highest flex items-center justify-center border border-outline-variant/20">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="shield">shield</span>
+</div>
+</div>
+<div class="space-y-4 mb-10">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="water_drop">water_drop</span>
+<span class="text-on-surface-variant font-medium">Rain Protection</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="thermostat">thermostat</span>
+<span class="text-on-surface-variant font-medium">Heat Wave Cover</span>
+</div>
+<div class="flex items-center gap-3 opacity-30">
+<span class="material-symbols-outlined text-xl" data-icon="bolt">bolt</span>
+<span class="text-on-surface-variant font-medium line-through">Priority Payouts</span>
+</div>
+</div>
+<label class="mt-auto flex items-center justify-between cursor-pointer">
+<span class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Select Plan</span>
+<input class="w-8 h-8 rounded-full border-2 border-outline-variant bg-transparent checked:bg-primary checked:border-primary focus:ring-0 transition-all cursor-pointer" name="plan" type="radio"/>
+</label>
+</div>
+<!-- Premium Plan Card (Recommended) -->
+<div class="group relative flex flex-col p-8 rounded-[2.5rem] bg-surface-container border-2 border-primary/40 active-glow transition-all duration-300 hover:border-primary active:scale-[0.98]">
+<!-- Recommended Tag -->
+<div class="absolute -top-3 right-8 bg-gradient-to-tr from-primary to-primary-container px-4 py-1.5 rounded-full shadow-lg">
+<span class="text-[10px] font-black uppercase tracking-[0.15em] text-on-primary-fixed">Recommended</span>
+</div>
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="font-headline text-3xl font-bold tracking-tight mb-1">Premium</h3>
+<div class="flex items-baseline gap-1">
+<span class="text-4xl font-headline font-bold text-primary">₹48</span>
+<span class="text-on-surface-variant text-sm font-bold uppercase tracking-tighter">/ shift</span>
+</div>
+</div>
+<div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary/20 to-primary-container/20 flex items-center justify-center border border-primary/30">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="verified_user">verified_user</span>
+</div>
+</div>
+<div class="space-y-5 mb-12">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="check" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="text-on-surface font-semibold">Everything in Basic</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="emergency_home">emergency_home</span>
+<span class="text-on-surface font-semibold">Accident Coverage</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="bolt">bolt</span>
+<span class="text-on-surface font-semibold">Priority 10min Payouts</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="nightlight">nightlight</span>
+<span class="text-on-surface font-semibold">Night Curfew Protection</span>
+</div>
+</div>
+<label class="mt-auto flex items-center justify-between cursor-pointer">
+<span class="text-xs font-black uppercase tracking-widest text-primary">Active Plan</span>
+<input checked="" class="w-10 h-10 rounded-full border-2 border-primary bg-primary/20 checked:bg-primary checked:border-primary focus:ring-0 transition-all cursor-pointer" name="plan" type="radio"/>
+</label>
+</div>
+</div>
+<!-- Detail Image (Contextual) -->
+<div class="mt-12 rounded-3xl overflow-hidden relative h-48 bg-surface-container-low group">
+<img alt="delivery rider hero" class="w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700" data-alt="cinematic close-up of a delivery rider helmet and jacket reflecting urban neon orange lights in a rainy night street setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBv-9QvAwWLJDmrI-4EgamEk611wlL2OoozfPrkGgVvvDhLBA8SzgoiQepuq1CZbZzOL1Xa1_K-Nj1kwEant2iijURXFpKfn-1o1xDm2bglCAMVsndMm1SwqwCFGm4afbAW8edNDl0O_JY27dohD2AmkQFAv7HLATbj0Qe7-B5EF50XLS0UQ7OjEwQpHuHgbIVI-XT53xR_sfGT7Ne-4_372Q7heBeAAZ6e175lT_GQZ02TdT6f68igHOxX3gqQHP5Am7GFmajmUU0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dim to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<p class="text-xs font-black uppercase tracking-widest text-primary mb-1">Rider Safety First</p>
+<p class="font-headline font-bold text-lg">Over 50,000+ shifts covered this week</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar as CTA Container -->
+<footer class="fixed bottom-0 left-0 w-full px-6 pb-10 pt-4 bg-gradient-to-t from-[#0e0e0e] to-transparent z-50">
+<button class="flex w-full items-center justify-center bg-gradient-to-tr from-[#ff915a] to-[#ff7a31] rounded-3xl py-5 text-black font-black uppercase tracking-[0.2em] shadow-[0px_16px_32px_rgba(255,106,0,0.12)] hover:brightness-110 active:scale-[0.96] transition-all duration-150 group">
+<span>Continue</span>
+<span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</footer>
+</body></html>
