@@ -62,3 +62,6 @@ __pycache__/
 *.pyi
 *.egg-info/
 dist/
+
+# Windows alternate data stream artifacts
+*:Zone.Identifier
