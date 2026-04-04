@@ -23,12 +23,53 @@ const { CitiesService } = require("./services/cities-service");
 const { AuthService } = require("./services/auth-service");
 const { TwilioVerificationService } = require("./services/verification-service");
 const { createDataStore } = require("./utils/storage");
+const { getConfig } = require("./utils/config");
+
+function buildCorsMiddleware(config) {
+  const allowedOrigins = new Set(config.allowedOrigins || []);
+  const allowAnyOrigin = allowedOrigins.size === 0;
+  const allowHeaders = "Origin, X-Requested-With, Content-Type, Accept, Authorization";
+  const allowMethods = "GET,POST,PUT,PATCH,DELETE,OPTIONS";
+
+  return (req, res, next) => {
+    const origin = req.headers.origin;
+    const originAllowed = !origin || allowAnyOrigin || allowedOrigins.has(origin);
+
+    if (origin && originAllowed) {
+      res.setHeader("Access-Control-Allow-Origin", allowAnyOrigin ? "*" : origin);
+      res.setHeader("Vary", "Origin");
+      res.setHeader("Access-Control-Allow-Headers", allowHeaders);
+      res.setHeader("Access-Control-Allow-Methods", allowMethods);
+    }
+
+    if (req.method === "OPTIONS") {
+      if (!originAllowed) {
+        return res.status(403).json({
+          error: "cors_not_allowed",
+          message: "Origin is not allowed"
+        });
+      }
+
+      return res.status(204).end();
+    }
+
+    if (origin && !originAllowed) {
+      return res.status(403).json({
+        error: "cors_not_allowed",
+        message: "Origin is not allowed"
+      });
+    }
+
+    return next();
+  };
+}
 
 function buildApp(overrides = {}) {
+  const config = overrides.config || getConfig();
   const app = express();
-  const dataStore = overrides.dataStore || createDataStore();
-  const mlClient = overrides.mlClient || new MLClient();
-  const weatherService = overrides.weatherService || new WeatherService();
+  const dataStore = overrides.dataStore || createDataStore(config);
+  const mlClient = overrides.mlClient || new MLClient(config);
+  const weatherService = overrides.weatherService || new WeatherService(config);
   const walletService = overrides.walletService || new WalletService({ dataStore });
   const notificationService =
     overrides.notificationService || new NotificationService({ dataStore });
@@ -51,6 +92,7 @@ function buildApp(overrides = {}) {
   const authService =
     overrides.authService || new AuthService({ dataStore, verificationService });
 
+  app.use(buildCorsMiddleware(config));
   app.use(express.json());
 
   app.get("/health", (_req, res) => {

@@ -657,9 +657,21 @@ class LocalAppDataService {
       'explanation': {
         'summary': 'Your weekly premium is calibrated to recent operating conditions in ${zone['name']}.',
         'top_factors': [
-          'Zone risk profile: ${riskClass.toUpperCase()}',
-          'Shift coverage: ${rider['shifts_covered']}',
-          'Payout mode: ${payoutPreference.toUpperCase()}',
+          {
+            'factor': 'Zone risk profile',
+            'contribution_pct': 45,
+            'detail': 'Risk class is ${riskClass.toUpperCase()} for ${zone['name']}.',
+          },
+          {
+            'factor': 'Shift coverage',
+            'contribution_pct': 30,
+            'detail': 'Coverage is set to ${rider['shifts_covered']}.',
+          },
+          {
+            'factor': 'Payout mode',
+            'contribution_pct': 25,
+            'detail': 'Preferred payout mode is ${payoutPreference.toUpperCase()}.',
+          },
         ],
       },
     };
