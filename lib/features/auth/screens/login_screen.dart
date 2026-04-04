@@ -125,7 +125,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: IconButton(
                         icon: Icon(Icons.arrow_back, color: context.colors.onSurface, size: 20),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.go(AppRoutes.onboarding);
+                          }
+                        },
                         padding: EdgeInsets.zero,
                       ),
                     ),

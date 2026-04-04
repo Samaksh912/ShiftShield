@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/app_colors.dart';
 import 'dashboard_screen.dart';
+import '../../policy/screens/policy_screen.dart';
+import '../../claims/screens/claims_screen.dart';
+import '../../profile/screens/profile_screen.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -16,21 +19,18 @@ class _MainLayoutState extends State<MainLayout> {
 
   final List<Widget> _pages = [
     const DashboardScreen(),
-    const Center(child: Text('Policy Screen')),
-    const Center(child: Text('Claims Screen')),
-    const Center(child: Text('Wallet Screen')),
-    const Center(child: Text('Profile Screen')),
+    const PolicyScreen(),
+    const ClaimsScreen(),
+    const ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colors.surface,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
-      extendBody: true, // Need this so scrolling content goes behind nav bar glass
+      body: IndexedStack(index: _currentIndex, children: _pages),
+      extendBody:
+          true, // Need this so scrolling content goes behind nav bar glass
       bottomNavigationBar: _buildBottomNavBar(context),
     );
   }
@@ -47,7 +47,9 @@ class _MainLayoutState extends State<MainLayout> {
     return Container(
       decoration: BoxDecoration(
         color: navBarColor,
-        border: Border(top: BorderSide(color: context.colors.primary.withValues(alpha: 0.1))),
+        border: Border(
+          top: BorderSide(color: context.colors.primary.withValues(alpha: 0.1)),
+        ),
         boxShadow: [
           BoxShadow(
             color: shadowColor,
@@ -79,25 +81,22 @@ class _FluidNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  const _FluidNavBar({
-    required this.currentIndex,
-    required this.onTap,
-  });
+  const _FluidNavBar({required this.currentIndex, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final totalWidth = constraints.maxWidth;
-        final itemWidth = totalWidth / 5;
+        final itemWidth = totalWidth / 4;
 
         return Stack(
           alignment: Alignment.centerLeft,
           children: [
             // The moving fluid highlight
             AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutCubic,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeOutBack,
               left: currentIndex * itemWidth,
               child: Container(
                 width: itemWidth,
@@ -141,19 +140,11 @@ class _FluidNavBar extends StatelessWidget {
                   width: itemWidth,
                 ),
                 _NavBarItem(
-                  icon: Icons.account_balance_wallet_outlined,
-                  activeIcon: Icons.account_balance_wallet,
-                  label: 'Wallet',
-                  isSelected: currentIndex == 3,
-                  onTap: () => onTap(3),
-                  width: itemWidth,
-                ),
-                _NavBarItem(
                   icon: Icons.person_outline,
                   activeIcon: Icons.person,
                   label: 'Profile',
-                  isSelected: currentIndex == 4,
-                  onTap: () => onTap(4),
+                  isSelected: currentIndex == 3,
+                  onTap: () => onTap(3),
                   width: itemWidth,
                 ),
               ],
@@ -196,7 +187,9 @@ class _NavBarItem extends StatelessWidget {
             Icon(
               isSelected ? activeIcon : icon,
               size: 24,
-              color: isSelected ? context.colors.primary : context.colors.onSurfaceVariant.withValues(alpha: 0.6),
+              color: isSelected
+                  ? context.colors.primary
+                  : context.colors.onSurfaceVariant.withValues(alpha: 0.6),
             ),
             const SizedBox(height: 6),
             Text(
@@ -205,7 +198,9 @@ class _NavBarItem extends StatelessWidget {
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.0,
-                color: isSelected ? context.colors.primary : context.colors.onSurfaceVariant.withValues(alpha: 0.6),
+                color: isSelected
+                    ? context.colors.primary
+                    : context.colors.onSurfaceVariant.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 8),

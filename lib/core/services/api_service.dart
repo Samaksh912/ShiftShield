@@ -15,7 +15,13 @@ class ApiService {
   // ─────────────────────────────────────────────
 
   static Future<Map<String, String>> _authHeaders() async {
-    final token = await AuthService.getToken();
+    final token = AppConfig.devBypassAuth
+        ? AppConfig.devJwt
+        : await AuthService.getToken();
+
+    print('>>> devBypassAuth: ${AppConfig.devBypassAuth}');
+    print('>>> token: $token');
+
     return {
       'Content-Type': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
@@ -37,14 +43,14 @@ class ApiService {
 
   static Future<Map<String, dynamic>> _get(String path) async {
     final headers = await _authHeaders();
-    final response = await http.get(
-      Uri.parse('$_base$path'),
-      headers: headers,
-    );
+    final response = await http.get(Uri.parse('$_base$path'), headers: headers);
     return _handleResponse(response);
   }
 
-  static Future<Map<String, dynamic>> _post(String path, Map<String, dynamic> body) async {
+  static Future<Map<String, dynamic>> _post(
+    String path,
+    Map<String, dynamic> body,
+  ) async {
     final headers = await _authHeaders();
     final response = await http.post(
       Uri.parse('$_base$path'),
@@ -54,7 +60,10 @@ class ApiService {
     return _handleResponse(response);
   }
 
-  static Future<Map<String, dynamic>> _put(String path, Map<String, dynamic> body) async {
+  static Future<Map<String, dynamic>> _put(
+    String path,
+    Map<String, dynamic> body,
+  ) async {
     final headers = await _authHeaders();
     final response = await http.put(
       Uri.parse('$_base$path'),
@@ -129,12 +138,19 @@ class ApiService {
   // ─────────────────────────────────────────────
   // POLICIES
   // ─────────────────────────────────────────────
-
   /// POST /api/policies/create
-  static Future<Map<String, dynamic>> createPolicy(String quoteId, String paymentMethod) {
+  static Future<Map<String, dynamic>> createPolicy(
+    String quoteId,
+    String paymentMethod, {
+    String? paymentReferenceId,
+    String? paymentStatus,
+  }) {
     return _post('/api/policies/create', {
       'quote_id': quoteId,
       'payment_method': paymentMethod,
+      if (paymentReferenceId != null)
+        'payment_reference_id': paymentReferenceId,
+      if (paymentStatus != null) 'payment_status': paymentStatus,
     });
   }
 
@@ -144,7 +160,10 @@ class ApiService {
   }
 
   /// GET /api/policies/history
-  static Future<Map<String, dynamic>> getPolicyHistory({int limit = 20, int offset = 0}) {
+  static Future<Map<String, dynamic>> getPolicyHistory({
+    int limit = 20,
+    int offset = 0,
+  }) {
     return _get('/api/policies/history?limit=$limit&offset=$offset');
   }
 
@@ -183,6 +202,11 @@ class ApiService {
   /// GET /api/claims
   static Future<Map<String, dynamic>> getClaims() {
     return _get('/api/claims');
+  }
+
+  /// GET /api/notifications
+  static Future<Map<String, dynamic>> getNotifications() {
+    return _get('/api/notifications');
   }
 }
 

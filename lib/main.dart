@@ -11,6 +11,8 @@ void main() async {
   if (AppConfig.devBypassAuth) {
     await AuthService.saveToken(AppConfig.devJwt);
     await AuthService.savePhone('9876543210');
+  } else {
+    await AuthService.clearToken();
   }
 
   runApp(const IgniteApp());

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/app_colors.dart';
 import '../../../core/services/api_service.dart';
+import 'payments_screen.dart';
 
 class QuoteScreen extends StatefulWidget {
   const QuoteScreen({super.key});
@@ -12,8 +13,8 @@ class QuoteScreen extends StatefulWidget {
   State<QuoteScreen> createState() => _QuoteScreenState();
 }
 
-
-class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStateMixin {
+class _QuoteScreenState extends State<QuoteScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
 
   // Live quote data
@@ -23,12 +24,18 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
   Timer? _countdownTimer;
   Duration _timeLeft = Duration.zero;
 
+  // ── Promoted to state so _buyPolicy can access them ──────────────────────
+  int _premium = 0;
+  String _weekStart = '';
+  String _weekEnd = '';
+  // ─────────────────────────────────────────────────────────────────────────
+
   @override
   void initState() {
     super.initState();
     _pulseController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
     )..repeat(reverse: true);
     _fetchQuote();
   }
@@ -36,24 +43,39 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
   String _nextMonday() {
     final now = DateTime.now();
     final daysUntilMonday = (DateTime.monday - now.weekday + 7) % 7;
-    final monday = daysUntilMonday == 0 ? now.add(Duration(days: 7)) : now.add(Duration(days: daysUntilMonday));
+    final monday = daysUntilMonday == 0
+        ? now.add(const Duration(days: 7))
+        : now.add(Duration(days: daysUntilMonday));
     return '${monday.year}-${monday.month.toString().padLeft(2, '0')}-${monday.day.toString().padLeft(2, '0')}';
   }
 
   Future<void> _fetchQuote() async {
-    setState(() { _isLoading = true; _errorMsg = null; });
+    setState(() {
+      _isLoading = true;
+      _errorMsg = null;
+    });
     try {
       final data = await ApiService.generateQuote(_nextMonday());
       final quote = data['quote'] as Map<String, dynamic>;
       setState(() {
         _quote = quote;
+        // Cache the fields we need outside build()
+        _premium = quote['premium'] as int? ?? 0;
+        _weekStart = quote['week_start'] as String? ?? '';
+        _weekEnd = quote['week_end'] as String? ?? '';
         _isLoading = false;
       });
       _startCountdown(quote['purchase_deadline'] as String?);
     } on ApiException catch (e) {
-      setState(() { _errorMsg = e.message; _isLoading = false; });
+      setState(() {
+        _errorMsg = e.message;
+        _isLoading = false;
+      });
     } catch (_) {
-      setState(() { _errorMsg = 'Could not load quote. Is the backend running?'; _isLoading = false; });
+      setState(() {
+        _errorMsg = 'Could not load quote. Is the backend running?';
+        _isLoading = false;
+      });
     }
   }
 
@@ -62,7 +84,7 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
     _countdownTimer?.cancel();
     final deadline = DateTime.parse(deadlineStr);
     _updateTimeLeft(deadline);
-    _countdownTimer = Timer.periodic(Duration(seconds: 1), (_) {
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) _updateTimeLeft(deadline);
     });
   }
@@ -79,6 +101,31 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
     super.dispose();
   }
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // NAVIGATION
+  // _premium / _weekStart / _weekEnd are state fields — always in scope here.
+  // ─────────────────────────────────────────────────────────────────────────
+
+  void _buyPolicy(String quoteId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PaymentScreen(
+          args: PaymentScreenArgs(
+            quoteId: quoteId,
+            premium: _premium,
+            weekStart: _weekStart,
+            weekEnd: _weekEnd,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // BUILD
+  // ─────────────────────────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -89,13 +136,20 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
             mainAxisSize: MainAxisSize.min,
             children: [
               CircularProgressIndicator(color: context.colors.primary),
-              SizedBox(height: 16),
-              Text('Calculating your risk...', style: GoogleFonts.manrope(color: context.colors.onSurfaceVariant, fontSize: 14)),
+              const SizedBox(height: 16),
+              Text(
+                'Calculating your risk...',
+                style: GoogleFonts.manrope(
+                  color: context.colors.onSurfaceVariant,
+                  fontSize: 14,
+                ),
+              ),
             ],
           ),
         ),
       );
     }
+
     if (_errorMsg != null) {
       return Scaffold(
         backgroundColor: context.colors.surface,
@@ -105,11 +159,24 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.cloud_off, size: 64, color: context.colors.onSurfaceVariant),
-                SizedBox(height: 16),
-                Text(_errorMsg!, textAlign: TextAlign.center, style: GoogleFonts.manrope(color: context.colors.onSurfaceVariant)),
-                SizedBox(height: 24),
-                ElevatedButton(onPressed: _fetchQuote, child: Text('Retry')),
+                Icon(
+                  Icons.cloud_off,
+                  size: 64,
+                  color: context.colors.onSurfaceVariant,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  _errorMsg!,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.manrope(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _fetchQuote,
+                  child: const Text('Retry'),
+                ),
               ],
             ),
           ),
@@ -118,7 +185,12 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
     }
 
     final quote = _quote!;
-    final premium = quote['premium'] as int? ?? 0;
+
+    // Local build variables — derived from state fields for convenience.
+    final premium = _premium;
+    final weekStart = _weekStart;
+    final weekEnd = _weekEnd;
+
     final riskBand = quote['risk_band'] as String? ?? 'medium';
     final canPurchase = quote['can_purchase'] as bool? ?? true;
     final explanation = quote['explanation'] as Map<String, dynamic>? ?? {};
@@ -127,8 +199,6 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
     final coverage = quote['coverage_breakdown'] as Map<String, dynamic>? ?? {};
     final lunchMax = quote['lunch_shift_max_payout'] as int? ?? 0;
     final dinnerMax = quote['dinner_shift_max_payout'] as int? ?? 0;
-    final weekStart = quote['week_start'] as String? ?? '';
-    final weekEnd = quote['week_end'] as String? ?? '';
     final hours = _timeLeft.inHours;
     final minutes = (_timeLeft.inMinutes % 60).toString().padLeft(2, '0');
     final secs = (_timeLeft.inSeconds % 60).toString().padLeft(2, '0');
@@ -136,22 +206,28 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
     final riskColor = riskBand == 'low'
         ? Colors.green.shade400
         : riskBand == 'high'
-            ? Colors.red.shade400
-            : Colors.amber.shade400;
+        ? Colors.red.shade400
+        : Colors.amber.shade400;
+
     return Scaffold(
       backgroundColor: context.colors.surface,
       body: Stack(
         children: [
-          // Scrollable Content
+          // ── Scrollable Content ──────────────────────────────────────────
           SafeArea(
             bottom: false,
             child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              padding: EdgeInsets.only(top: 80, left: 24, right: 24, bottom: 120),
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(
+                top: 80,
+                left: 24,
+                right: 24,
+                bottom: 120,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ────── Hero ──────
+                  // ── Hero ──────────────────────────────────────────────
                   Container(
                     margin: const EdgeInsets.only(bottom: 32),
                     child: Column(
@@ -159,7 +235,10 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                       children: [
                         // Risk band pill
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: riskColor.withOpacity(0.12),
                             borderRadius: BorderRadius.circular(32),
@@ -169,39 +248,69 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                             children: [
                               FadeTransition(
                                 opacity: _pulseController,
-                                child: Container(width: 8, height: 8,
-                                  decoration: BoxDecoration(color: riskColor, shape: BoxShape.circle)),
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: riskColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 '${riskBand.toUpperCase()} RISK · ₹$premium / WEEK',
-                                style: GoogleFonts.manrope(color: riskColor, fontSize: 10,
-                                    fontWeight: FontWeight.bold, letterSpacing: 2.0),
+                                style: GoogleFonts.manrope(
+                                  color: riskColor,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 2.0,
+                                ),
                               ),
                             ],
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Text('YOUR\nSHIELD QUOTE',
-                          style: GoogleFonts.spaceGrotesk(fontSize: 36, fontWeight: FontWeight.bold,
-                              height: 1.1, letterSpacing: -1.0, color: context.colors.onSurface)),
+                        Text(
+                          'YOUR\nSHIELD QUOTE',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            height: 1.1,
+                            letterSpacing: -1.0,
+                            color: context.colors.onSurface,
+                          ),
+                        ),
                         const SizedBox(height: 8),
-                        Text('$weekStart → $weekEnd',
-                          style: GoogleFonts.manrope(fontSize: 14, fontWeight: FontWeight.w500,
-                              color: context.colors.onSurfaceVariant)),
+                        Text(
+                          '$weekStart → $weekEnd',
+                          style: GoogleFonts.manrope(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: context.colors.onSurfaceVariant,
+                          ),
+                        ),
                       ],
                     ),
                   ),
 
-                  // ────── Premium card ──────
+                  // ── Premium card ──────────────────────────────────────
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       color: context.colors.surfaceContainer,
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: context.colors.primary.withOpacity(0.3), width: 1.5),
-                      boxShadow: [BoxShadow(color: context.colors.primary.withOpacity(0.08),
-                          blurRadius: 32, spreadRadius: -4)],
+                      border: Border.all(
+                        color: context.colors.primary.withOpacity(0.3),
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: context.colors.primary.withOpacity(0.08),
+                          blurRadius: 32,
+                          spreadRadius: -4,
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,33 +321,58 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('WEEKLY PREMIUM',
-                                  style: GoogleFonts.manrope(fontSize: 10, fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.5, color: context.colors.onSurfaceVariant)),
+                                Text(
+                                  'WEEKLY PREMIUM',
+                                  style: GoogleFonts.manrope(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.5,
+                                    color: context.colors.onSurfaceVariant,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
                                 Row(
-                                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.baseline,
                                   textBaseline: TextBaseline.alphabetic,
                                   children: [
-                                    Text('₹$premium',
-                                      style: GoogleFonts.spaceGrotesk(fontSize: 48,
-                                          fontWeight: FontWeight.bold, color: context.colors.primary)),
+                                    Text(
+                                      '₹$premium',
+                                      style: GoogleFonts.spaceGrotesk(
+                                        fontSize: 48,
+                                        fontWeight: FontWeight.bold,
+                                        color: context.colors.primary,
+                                      ),
+                                    ),
                                     const SizedBox(width: 6),
-                                    Text('/week', style: GoogleFonts.manrope(fontSize: 14,
-                                        color: context.colors.onSurfaceVariant)),
+                                    Text(
+                                      '/week',
+                                      style: GoogleFonts.manrope(
+                                        fontSize: 14,
+                                        color: context.colors.onSurfaceVariant,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
                                 color: riskColor.withOpacity(0.12),
                                 borderRadius: BorderRadius.circular(32),
                               ),
-                              child: Text(riskBand.toUpperCase(),
-                                style: GoogleFonts.spaceGrotesk(fontSize: 12,
-                                    fontWeight: FontWeight.bold, color: riskColor)),
+                              child: Text(
+                                riskBand.toUpperCase(),
+                                style: GoogleFonts.spaceGrotesk(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: riskColor,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -253,11 +387,33 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              _statCell('LUNCH MAX', '₹$lunchMax', Icons.wb_sunny),
-                              Container(width: 1, height: 40, color: context.colors.outlineVariant.withOpacity(0.3)),
-                              _statCell('DINNER MAX', '₹$dinnerMax', Icons.nights_stay),
-                              Container(width: 1, height: 40, color: context.colors.outlineVariant.withOpacity(0.3)),
-                              _statCell('SHIFTS', '${coverage['total_protected_shifts'] ?? 12}', Icons.shield_outlined),
+                              _statCell(
+                                'LUNCH MAX',
+                                '₹$lunchMax',
+                                Icons.wb_sunny,
+                              ),
+                              Container(
+                                width: 1,
+                                height: 40,
+                                color: context.colors.outlineVariant
+                                    .withOpacity(0.3),
+                              ),
+                              _statCell(
+                                'DINNER MAX',
+                                '₹$dinnerMax',
+                                Icons.nights_stay,
+                              ),
+                              Container(
+                                width: 1,
+                                height: 40,
+                                color: context.colors.outlineVariant
+                                    .withOpacity(0.3),
+                              ),
+                              _statCell(
+                                'SHIFTS',
+                                '${coverage['total_protected_shifts'] ?? 12}',
+                                Icons.shield_outlined,
+                              ),
                             ],
                           ),
                         ),
@@ -267,11 +423,17 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
 
                   const SizedBox(height: 24),
 
-                  // ────── Risk factors ──────
+                  // ── Risk factors ──────────────────────────────────────
                   if (topFactors.isNotEmpty) ...[
-                    Text('RISK FACTORS',
-                      style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5, color: context.colors.primary)),
+                    Text(
+                      'RISK FACTORS',
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                        color: context.colors.primary,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     Container(
                       padding: const EdgeInsets.all(20),
@@ -283,7 +445,9 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                         children: [
                           ...topFactors.map((f) {
                             final factor = f as Map<String, dynamic>;
-                            final pct = (factor['contribution_pct'] as num? ?? 0).toDouble();
+                            final pct =
+                                (factor['contribution_pct'] as num? ?? 0)
+                                    .toDouble();
                             final detail = factor['detail'] as String? ?? '';
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 16),
@@ -291,14 +455,25 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(factor['factor'] as String? ?? '',
-                                        style: GoogleFonts.manrope(fontSize: 13,
-                                            fontWeight: FontWeight.w600, color: context.colors.onSurface)),
-                                      Text('${pct.toInt()}%',
-                                        style: GoogleFonts.spaceGrotesk(fontSize: 13,
-                                            fontWeight: FontWeight.bold, color: context.colors.primary)),
+                                      Text(
+                                        factor['factor'] as String? ?? '',
+                                        style: GoogleFonts.manrope(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: context.colors.onSurface,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${pct.toInt()}%',
+                                        style: GoogleFonts.spaceGrotesk(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: context.colors.primary,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 4),
@@ -307,14 +482,22 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                                     child: LinearProgressIndicator(
                                       value: pct / 100,
                                       minHeight: 6,
-                                      backgroundColor: context.colors.surfaceContainerHighest,
-                                      valueColor: AlwaysStoppedAnimation<Color>(context.colors.primary),
+                                      backgroundColor: context
+                                          .colors
+                                          .surfaceContainerHighest,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        context.colors.primary,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(height: 4),
-                                  Text(detail,
-                                    style: GoogleFonts.manrope(fontSize: 11,
-                                        color: context.colors.onSurfaceVariant)),
+                                  Text(
+                                    detail,
+                                    style: GoogleFonts.manrope(
+                                      fontSize: 11,
+                                      color: context.colors.onSurfaceVariant,
+                                    ),
+                                  ),
                                 ],
                               ),
                             );
@@ -326,9 +509,14 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                                 color: context.colors.surfaceContainerLow,
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Text(summary,
-                                style: GoogleFonts.manrope(fontSize: 12,
-                                    color: context.colors.onSurfaceVariant, height: 1.5)),
+                              child: Text(
+                                summary,
+                                style: GoogleFonts.manrope(
+                                  fontSize: 12,
+                                  color: context.colors.onSurfaceVariant,
+                                  height: 1.5,
+                                ),
+                              ),
                             ),
                         ],
                       ),
@@ -336,25 +524,44 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                     const SizedBox(height: 24),
                   ],
 
-                  // ────── Countdown ──────
+                  // ── Countdown ─────────────────────────────────────────
                   if (_timeLeft > Duration.zero)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 16,
+                      ),
                       decoration: BoxDecoration(
                         color: context.colors.surfaceContainerLow,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: context.colors.outlineVariant.withOpacity(0.3)),
+                        border: Border.all(
+                          color: context.colors.outlineVariant.withOpacity(0.3),
+                        ),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.timer_outlined, size: 18, color: context.colors.onSurfaceVariant),
+                          Icon(
+                            Icons.timer_outlined,
+                            size: 18,
+                            color: context.colors.onSurfaceVariant,
+                          ),
                           const SizedBox(width: 8),
-                          Text('Purchase closes in ',
-                            style: GoogleFonts.manrope(fontSize: 13, color: context.colors.onSurfaceVariant)),
-                          Text('${hours}h ${minutes}m ${secs}s',
-                            style: GoogleFonts.spaceGrotesk(fontSize: 13,
-                                fontWeight: FontWeight.bold, color: context.colors.primary)),
+                          Text(
+                            'Purchase closes in ',
+                            style: GoogleFonts.manrope(
+                              fontSize: 13,
+                              color: context.colors.onSurfaceVariant,
+                            ),
+                          ),
+                          Text(
+                            '${hours}h ${minutes}m ${secs}s',
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: context.colors.primary,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -363,7 +570,7 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
             ),
           ),
 
-          // TopAppBar
+          // ── Frosted app bar ───────────────────────────────────────────
           Positioned(
             top: 0,
             left: 0,
@@ -373,7 +580,11 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
                   height: 64 + MediaQuery.of(context).padding.top,
-                  padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 24, right: 24),
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).padding.top,
+                    left: 24,
+                    right: 24,
+                  ),
                   color: context.colors.surface.withOpacity(0.7),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -387,7 +598,7 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                               color: context.colors.primary,
                             ),
                           ),
-                          SizedBox(width: 12),
+                          const SizedBox(width: 12),
                           Text(
                             'CHOOSE YOUR PLAN',
                             style: GoogleFonts.spaceGrotesk(
@@ -419,7 +630,7 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
             ),
           ),
 
-          // BottomNavBar
+          // ── Sticky CTA ────────────────────────────────────────────────
           Positioned(
             bottom: 0,
             left: 0,
@@ -429,7 +640,9 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                 top: 16,
                 left: 24,
                 right: 24,
-                bottom: MediaQuery.of(context).padding.bottom > 0 ? MediaQuery.of(context).padding.bottom : 24,
+                bottom: MediaQuery.of(context).padding.bottom > 0
+                    ? MediaQuery.of(context).padding.bottom
+                    : 24,
               ),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -445,20 +658,30 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: canPurchase ? () => _buyPolicy(quote['id'] as String) : null,
+                  onPressed: canPurchase
+                      ? () => _buyPolicy(quote['id'] as String)
+                      : null,
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
                     elevation: 0,
-                    disabledBackgroundColor: context.colors.surfaceContainerHighest,
+                    disabledBackgroundColor:
+                        context.colors.surfaceContainerHighest,
                   ),
                   child: Ink(
                     decoration: BoxDecoration(
-                      gradient: canPurchase ? LinearGradient(
-                        colors: [context.colors.primary, context.colors.primaryContainer],
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.topRight,
-                      ) : null,
+                      gradient: canPurchase
+                          ? LinearGradient(
+                              colors: [
+                                context.colors.primary,
+                                context.colors.primaryContainer,
+                              ],
+                              begin: Alignment.bottomLeft,
+                              end: Alignment.topRight,
+                            )
+                          : null,
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Container(
@@ -467,15 +690,25 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            canPurchase ? 'BUY POLICY — ₹$premium' : 'PURCHASE UNAVAILABLE',
+                            canPurchase
+                                ? 'BUY POLICY — ₹$premium'
+                                : 'PURCHASE UNAVAILABLE',
                             style: GoogleFonts.manrope(
-                              fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.5,
-                              color: canPurchase ? context.colors.onPrimaryFixed : context.colors.onSurfaceVariant,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.5,
+                              color: canPurchase
+                                  ? context.colors.onPrimaryFixed
+                                  : context.colors.onSurfaceVariant,
                             ),
                           ),
                           if (canPurchase) ...[
                             const SizedBox(width: 8),
-                            Icon(Icons.arrow_forward, color: context.colors.onPrimaryFixed, size: 20),
+                            Icon(
+                              Icons.arrow_forward,
+                              color: context.colors.onPrimaryFixed,
+                              size: 20,
+                            ),
                           ],
                         ],
                       ),
@@ -490,9 +723,9 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
     );
   }
 
-  // ──────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────────────────
   // HELPERS
-  // ──────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────────────────
 
   Widget _statCell(String label, String value, IconData icon) {
     return Column(
@@ -500,66 +733,24 @@ class _QuoteScreenState extends State<QuoteScreen> with SingleTickerProviderStat
       children: [
         Icon(icon, size: 18, color: context.colors.primary),
         const SizedBox(height: 4),
-        Text(value,
-            style: GoogleFonts.spaceGrotesk(
-                fontSize: 14, fontWeight: FontWeight.bold, color: context.colors.onSurface)),
-        Text(label,
-            style: GoogleFonts.manrope(
-                fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1.2,
-                color: context.colors.onSurfaceVariant)),
+        Text(
+          value,
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: context.colors.onSurface,
+          ),
+        ),
+        Text(
+          label,
+          style: GoogleFonts.manrope(
+            fontSize: 9,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
       ],
     );
   }
-
-  bool _isBuying = false;
-
-  Future<void> _buyPolicy(String quoteId) async {
-    if (_isBuying) return;
-    setState(() => _isBuying = true);
-    try {
-      await ApiService.createPolicy(quoteId, 'wallet');
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Policy activated! You are covered 🎉',
-              style: GoogleFonts.manrope(fontWeight: FontWeight.bold)),
-          backgroundColor: Colors.green.shade700,
-          duration: const Duration(seconds: 3),
-        ),
-      );
-      // Stay on screen; future builds will show a Dashboard when that screen exists
-    } on ApiException catch (e) {
-      if (!mounted) return;
-      String msg;
-      switch (e.errorCode) {
-        case 'insufficient_balance':
-          msg = 'Insufficient wallet balance. Please top up.';
-          break;
-        case 'policy_exists':
-          msg = 'You already have an active policy for this week.';
-          break;
-        case 'quote_expired':
-          msg = 'This quote has expired. Please generate a new one.';
-          _fetchQuote();
-          break;
-        case 'disruption_active':
-          msg = 'Cannot purchase during an active disruption event.';
-          break;
-        default:
-          msg = e.message;
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(msg), backgroundColor: Colors.red.shade700),
-      );
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not reach server. Is the backend running?'),
-            backgroundColor: Colors.red),
-      );
-    } finally {
-      if (mounted) setState(() => _isBuying = false);
-    }
-  }
 }
-
