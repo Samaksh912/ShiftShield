@@ -26,9 +26,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _nextPage() {
     if (_currentPage < 2) {
-      _pageController.animateToPage(
-        _currentPage + 1,
-        duration: Duration(milliseconds: 300),
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     } else {
@@ -49,18 +48,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           // The sliding content
           PageView(
             controller: _pageController,
+            physics: const BouncingScrollPhysics(),
             onPageChanged: (index) {
               setState(() {
                 _currentPage = index;
               });
             },
-            children: [
-              Slide1Dark(),
-              Slide2Dark(),
-              Slide3Dark(),
-            ],
+            children: const [Slide1Dark(), Slide2Dark(), Slide3Dark()],
           ),
-          
+
           // Fixed Top Header (No glass blur as per image, just text)
           Positioned(
             top: 0,
@@ -69,7 +65,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: SafeArea(
               bottom: false,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 24,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -85,11 +84,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       onTap: _skipOnboarding,
                       child: Text(
                         "SKIP",
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: context.colors.onSurfaceVariant,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.5,
-                        ),
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              color: context.colors.onSurfaceVariant,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.5,
+                            ),
                       ),
                     ),
                   ],
@@ -97,60 +97,76 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
           ),
-          
+
           // Fixed Bottom Controls Overlay
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.only(left: 24, right: 24, top: 40, bottom: 40),
+              padding: const EdgeInsets.only(
+                left: 24,
+                right: 24,
+                top: 40,
+                bottom: 40,
+              ),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
                     context.colors.surface,
-                    context.colors.surface.withAlpha(230),
+                    context.colors.surface.withValues(
+                      alpha: 0.9,
+                    ), // Smooth fade
                     Colors.transparent,
                   ],
-                  stops: [0.0, 0.6, 1.0],
+                  stops: const [0.0, 0.6, 1.0],
                 ),
               ),
               child: SafeArea(
                 top: false,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start, // Left aligned dots
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start, // Left aligned dots
                   children: [
                     // Progress Indicator (Left Aligned for Asymmetry)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: List.generate(3, (index) {
                         final isActive = _currentPage == index;
-                        return Container(
-                          margin: EdgeInsets.only(right: 8),
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                          margin: const EdgeInsets.only(right: 8),
                           height: 4,
                           width: isActive ? 32 : 8,
                           decoration: BoxDecoration(
-                            color: isActive ? context.colors.primary : context.colors.surfaceContainerHighest,
+                            color: isActive
+                                ? context.colors.primary
+                                : context.colors.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(2),
-                            boxShadow: isActive ? [
-                              BoxShadow(
-                                color: context.colors.primary.withAlpha(76), // ~0.3 opacity
-                                blurRadius: 8,
-                              )
-                            ] : [],
+                            boxShadow: isActive
+                                ? [
+                                    BoxShadow(
+                                      color: context.colors.primary.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                      blurRadius: 8,
+                                    ),
+                                  ]
+                                : [],
                           ),
                         );
                       }),
                     ),
-                    SizedBox(height: 32),
+                    const SizedBox(height: 32),
+
                     // Primary Action
                     PrimaryButton(
-                      // Real app context: If it's the 1st slide mockup shows 'GET STARTED' 
-                      // but typically this advances. We defaults to NEXT unless slide 3
-                      text: "GET STARTED", 
+                      // Dynamically change text based on current page
+                      text: _currentPage == 2 ? "GET STARTED" : "NEXT",
                       icon: Icons.arrow_forward,
                       onPressed: _nextPage,
                     ),

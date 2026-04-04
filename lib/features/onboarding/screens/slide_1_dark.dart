@@ -26,14 +26,19 @@ class Slide1Dark extends StatelessWidget {
           // Content Layer
           SafeArea(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end, // pushes to bottom
                 children: [
+                  // This spacer pushes all the content to the bottom responsively
+                  const Spacer(),
+
                   // VITAL STATUS chip
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: context.colors.primary,
                       borderRadius: BorderRadius.circular(4),
@@ -41,36 +46,36 @@ class Slide1Dark extends StatelessWidget {
                     child: Text(
                       "VITAL STATUS",
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: context.colors.onPrimaryFixed,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.5,
-                            fontSize: 10,
-                          ),
+                        color: context.colors.onPrimaryFixed,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.5,
+                        fontSize: 10,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 16),
-                  
+                  const SizedBox(height: 16),
+
                   // Headline
                   Text(
                     "Earn Protection",
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          color: context.colors.onSurface,
-                          fontWeight: FontWeight.w800,
-                          height: 1.1,
-                          letterSpacing: -1.0,
-                        ),
+                      color: context.colors.onSurface,
+                      fontWeight: FontWeight.w800,
+                      height: 1.1,
+                      letterSpacing: -1.0,
+                    ),
                   ),
                   Text(
                     "While You Ride",
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          color: context.colors.primary,
-                          fontWeight: FontWeight.w800,
-                          height: 1.1,
-                          letterSpacing: -1.0,
-                        ),
+                      color: context.colors.primary,
+                      fontWeight: FontWeight.w800,
+                      height: 1.1,
+                      letterSpacing: -1.0,
+                    ),
                   ),
-                  SizedBox(height: 16),
-                  
+                  const SizedBox(height: 16),
+
                   // Subtitle
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -78,13 +83,14 @@ class Slide1Dark extends StatelessWidget {
                       Expanded(
                         child: Text(
                           "Dynamic coverage that activates\nthe second you log on to your\ndelivery app.",
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(
                                 color: context.colors.onSurfaceVariant,
                                 height: 1.5,
                               ),
                         ),
                       ),
-                      
+
                       // Floating Theme Toggle Button Mockup
                       Container(
                         width: 48,
@@ -92,12 +98,14 @@ class Slide1Dark extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: context.colors.surfaceContainerLow,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white.withOpacity(0.05)),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.05),
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.5),
                               blurRadius: 10,
-                              offset: Offset(0, 4),
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
@@ -109,8 +117,9 @@ class Slide1Dark extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
-                  SizedBox(height: 140), // Leaves space for the bottom navigation/button
+
+                  // Safely clears the bottom gradient, progress dots, and button
+                  const SizedBox(height: 180),
                 ],
               ),
             ),
