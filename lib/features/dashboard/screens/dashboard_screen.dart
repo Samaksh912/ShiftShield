@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart' hide ShimmerEffect;
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../theme/app_colors.dart';
 import '../../../core/services/api_service.dart';
+import '../../../core/services/auth_service.dart';
 import '../data/dashboard_mock_data.dart';
 import '../widgets/dashboard_app_bar.dart';
 import '../widgets/offline_banner.dart';
@@ -12,6 +13,7 @@ import '../widgets/no_policy_card.dart';
 import '../widgets/recent_payouts_list.dart';
 import '../widgets/no_claims_card.dart';
 import '../widgets/floating_cta_button.dart';
+import '../../quote/screens/quote_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -24,11 +26,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool _isLoading = true;
   bool _usedFallback = false;
   Map<String, dynamic> _data = Map<String, dynamic>.from(dummyDashboard);
+  bool _checkedPostSignupQuote = false;
 
   @override
   void initState() {
     super.initState();
     _fetchDashboard();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeOpenQuoteAfterSignup());
+  }
+
+  Future<void> _maybeOpenQuoteAfterSignup() async {
+    if (_checkedPostSignupQuote || !mounted) return;
+    _checkedPostSignupQuote = true;
+    final shouldOpenQuote = await AuthService.consumeOpenQuoteAfterSignup();
+    if (!shouldOpenQuote || !mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const QuoteScreen()),
+    );
   }
 
   Future<void> _fetchDashboard() async {

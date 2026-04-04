@@ -4,6 +4,7 @@ class AuthService {
   static const _storage = FlutterSecureStorage();
   static const _tokenKey = 'jwt_token';
   static const _phoneKey = 'rider_phone';
+  static const _openQuoteAfterSignupKey = 'open_quote_after_signup';
 
   static Future<void> saveToken(String token) async {
     await _storage.write(key: _tokenKey, value: token);
@@ -32,5 +33,18 @@ class AuthService {
 
   static Future<void> logout() async {
     await _storage.deleteAll();
+  }
+
+  static Future<void> markOpenQuoteAfterSignup() async {
+    await _storage.write(key: _openQuoteAfterSignupKey, value: 'true');
+  }
+
+  static Future<bool> consumeOpenQuoteAfterSignup() async {
+    final value = await _storage.read(key: _openQuoteAfterSignupKey);
+    if (value == 'true') {
+      await _storage.delete(key: _openQuoteAfterSignupKey);
+      return true;
+    }
+    return false;
   }
 }

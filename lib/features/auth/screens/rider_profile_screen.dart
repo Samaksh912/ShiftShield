@@ -171,6 +171,8 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
       // Save the JWT token from signup response
       final token = data['token'] as String;
       await AuthService.saveToken(token);
+      await AuthService.savePhone(widget.phone);
+      await AuthService.markOpenQuoteAfterSignup();
       if (!mounted) return;
       context.go(AppRoutes.dashboard);
     } on ApiException catch (e) {
