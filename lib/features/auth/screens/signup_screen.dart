@@ -7,6 +7,7 @@ import '../../../core/services/api_service.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/router/app_router.dart';
 import '../widgets/animated_network_background.dart';
+import '../../../core/config.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -25,6 +26,14 @@ class _SignupScreenState extends State<SignupScreen> {
 
     setState(() => _isLoading = true);
     try {
+      // Demo bypass — skip API entirely for known demo numbers
+      if (AppConfig.isDemoPhone(mobileNumber)) {
+        await AuthService.savePhone(mobileNumber);
+        if (!mounted) return;
+        context.push(AppRoutes.verifyOtpPath(mobileNumber));
+        return;
+      }
+
       await ApiService.sendOtp(mobileNumber);
       await AuthService.savePhone(mobileNumber);
       if (!mounted) return;

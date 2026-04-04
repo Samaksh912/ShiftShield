@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
+import 'package:flutter/foundation.dart'; // for kIsWeb
+
 import 'theme/app_theme.dart';
 import 'core/config.dart';
 import 'core/services/auth_service.dart';
@@ -7,7 +10,6 @@ import 'core/router/app_router.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // DEV BYPASS: pre-save token so the auth guard lets us through to dashboard
   if (AppConfig.devBypassAuth) {
     await AuthService.saveToken(AppConfig.devJwt);
     await AuthService.savePhone('9876543210');
@@ -23,7 +25,7 @@ class IgniteApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    Widget app = MaterialApp.router(
       title: 'ShiftShield',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
@@ -31,5 +33,36 @@ class IgniteApp extends StatelessWidget {
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
     );
+
+    // 👉 Only apply mobile frame on WEB
+    if (kIsWeb) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          backgroundColor: Colors.grey[300],
+          body: Center(
+            child: Container(
+              width: 375, // mobile width
+              height: 812, // mobile height
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: const [
+                  BoxShadow(blurRadius: 20, color: Colors.black26),
+                ],
+              ),
+              padding: const EdgeInsets.all(6),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: app,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 👉 Normal mobile app
+    return app;
   }
 }

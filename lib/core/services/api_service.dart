@@ -15,17 +15,32 @@ class ApiService {
   // ─────────────────────────────────────────────
 
   static Future<Map<String, String>> _authHeaders() async {
-    final token = AppConfig.devBypassAuth
-        ? AppConfig.devJwt
-        : await AuthService.getToken();
-
-    print('>>> devBypassAuth: ${AppConfig.devBypassAuth}');
-    print('>>> token: $token');
-
+    final token = await AuthService.getToken();
     return {
       'Content-Type': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
     };
+  }
+
+  /// POST /api/auth/request-login-otp
+  static Future<Map<String, dynamic>> sendOtp(String phone) {
+    return _post('/api/auth/request-login-otp', {'phone': phone});
+  }
+
+  /// POST /api/auth/verify-login-otp
+  static Future<Map<String, dynamic>> verifyLoginOtp(String phone, String otp) {
+    return _post('/api/auth/verify-login-otp', {'phone': phone, 'otp': otp});
+  }
+
+  /// POST /api/auth/login
+  static Future<Map<String, dynamic>> login(
+    String phone,
+    String verificationToken,
+  ) {
+    return _post('/api/auth/login', {
+      'phone': phone,
+      'verification_token': verificationToken,
+    });
   }
 
   static Map<String, dynamic> _handleResponse(http.Response response) {
@@ -79,7 +94,7 @@ class ApiService {
 
   /// POST /api/auth/send-otp
   static Future<Map<String, dynamic>> sendOtp(String phone) {
-    return _post('/api/auth/send-otp', {'phone': phone});
+    return _post('/api/auth/request-otp', {'phone': phone});
   }
 
   /// POST /api/auth/verify-otp
@@ -167,6 +182,10 @@ class ApiService {
     return _get('/api/policies/history?limit=$limit&offset=$offset');
   }
 
+  /// GET /api/policies/:id
+  static Future<Map<String, dynamic>> getPolicyById(String policyId) {
+    return _get('/api/policies/$policyId');
+  }
   // ─────────────────────────────────────────────
   // DASHBOARD
   // ─────────────────────────────────────────────

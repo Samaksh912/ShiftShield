@@ -6,21 +6,22 @@ import '../../../theme/app_colors.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/config.dart';
 
 class VerifyOtpScreen extends StatefulWidget {
   final String mobileNumber;
 
-  const VerifyOtpScreen({
-    super.key,
-    required this.mobileNumber,
-  });
+  const VerifyOtpScreen({super.key, required this.mobileNumber});
 
   @override
   State<VerifyOtpScreen> createState() => _VerifyOtpScreenState();
 }
 
 class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
-  final List<TextEditingController> _controllers = List.generate(4, (_) => TextEditingController());
+  final List<TextEditingController> _controllers = List.generate(
+    4,
+    (_) => TextEditingController(),
+  );
   final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
   bool _isLoading = false;
 
@@ -54,6 +55,30 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
     setState(() => _isLoading = true);
     try {
+      // Demo bypass — check hardcoded credentials before hitting API
+      if (AppConfig.isDemoPhone(widget.mobileNumber)) {
+        final expectedOtp = AppConfig.demoOtpFor(widget.mobileNumber);
+        if (otp != expectedOtp) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Invalid OTP. Check your demo credentials.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          for (var c in _controllers) {
+            c.clear();
+          }
+          _focusNodes[0].requestFocus();
+          return;
+        }
+        // Valid demo OTP — save token and go to dashboard
+        await AuthService.saveToken(AppConfig.devJwt);
+        if (!mounted) return;
+        context.go(AppRoutes.dashboard);
+        return;
+      }
+
+      // Real API flow for non-demo numbers
       final data = await ApiService.verifyOtp(widget.mobileNumber, otp);
       final token = data['token'] as String;
       final isNewUser = data['is_new_user'] as bool? ?? true;
@@ -64,21 +89,27 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       if (isNewUser) {
         context.go(AppRoutes.riderProfile);
       } else {
-        // Returning user — profile already exists, go to main layout
         context.go(AppRoutes.dashboard);
       }
     } on ApiException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message), backgroundColor: Colors.red.shade700),
+        SnackBar(
+          content: Text(e.message),
+          backgroundColor: Colors.red.shade700,
+        ),
       );
-      // Clear OTP fields on error
-      for (var c in _controllers) { c.clear(); }
+      for (var c in _controllers) {
+        c.clear();
+      }
       _focusNodes[0].requestFocus();
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not reach server. Is the backend running?'), backgroundColor: Colors.red),
+        const SnackBar(
+          content: Text('Could not reach server. Is the backend running?'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -128,13 +159,18 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                     ),
                   ),
                 ),
-                
+
                 Expanded(
                   child: ScrollConfiguration(
-                    behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+                    behavior: ScrollConfiguration.of(
+                      context,
+                    ).copyWith(overscroll: false),
                     child: SingleChildScrollView(
                       physics: BouncingScrollPhysics(),
-                      padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 32.0,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -157,7 +193,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                 height: 1.5,
                               ),
                               children: [
-                                TextSpan(text: 'Enter the 4-digit code sent to\n'),
+                                TextSpan(
+                                  text: 'Enter the 4-digit code sent to\n',
+                                ),
                                 TextSpan(
                                   text: '+91 ${widget.mobileNumber}',
                                   style: GoogleFonts.manrope(
@@ -169,7 +207,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                             ),
                           ),
                           SizedBox(height: 32),
-                          
+
                           // Asymmetric Information Card (Decorative Background Elements)
                           Stack(
                             clipBehavior: Clip.none,
@@ -182,10 +220,13 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                   height: 128,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: context.colors.primary.withOpacity(0.1),
+                                    color: context.colors.primary.withOpacity(
+                                      0.1,
+                                    ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: context.colors.primary.withOpacity(0.1),
+                                        color: context.colors.primary
+                                            .withOpacity(0.1),
                                         blurRadius: 64,
                                         spreadRadius: 32,
                                       ),
@@ -193,30 +234,49 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                   ),
                                 ),
                               ),
-                              
+
                               Column(
                                 children: [
                                   // OTP Input Cluster
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: List.generate(4, (index) {
                                       return Container(
                                         width: 72,
                                         height: 80,
                                         alignment: Alignment.center,
                                         decoration: BoxDecoration(
-                                          color: context.colors.surfaceContainerLow,
-                                          borderRadius: BorderRadius.circular(16),
+                                          color: context
+                                              .colors
+                                              .surfaceContainerLow,
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
                                           border: Border.all(
-                                            color: _focusNodes[index].hasFocus || _controllers[index].text.isNotEmpty
-                                                ? context.colors.primaryContainer
-                                                : context.colors.outlineVariant.withOpacity(0.3),
+                                            color:
+                                                _focusNodes[index].hasFocus ||
+                                                    _controllers[index]
+                                                        .text
+                                                        .isNotEmpty
+                                                ? context
+                                                      .colors
+                                                      .primaryContainer
+                                                : context.colors.outlineVariant
+                                                      .withOpacity(0.3),
                                             width: 2,
                                           ),
-                                          boxShadow: _focusNodes[index].hasFocus || _controllers[index].text.isNotEmpty
+                                          boxShadow:
+                                              _focusNodes[index].hasFocus ||
+                                                  _controllers[index]
+                                                      .text
+                                                      .isNotEmpty
                                               ? [
                                                   BoxShadow(
-                                                    color: context.colors.primary.withOpacity(0.1),
+                                                    color: context
+                                                        .colors
+                                                        .primary
+                                                        .withOpacity(0.1),
                                                     blurRadius: 20,
                                                     spreadRadius: 0,
                                                   ),
@@ -229,7 +289,8 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                           keyboardType: TextInputType.number,
                                           textAlign: TextAlign.center,
                                           maxLength: 1,
-                                          onChanged: (value) => _onDefaultChange(value, index),
+                                          onChanged: (value) =>
+                                              _onDefaultChange(value, index),
                                           style: GoogleFonts.spaceGrotesk(
                                             fontSize: 32,
                                             fontWeight: FontWeight.bold,
@@ -245,7 +306,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                     }),
                                   ),
                                   SizedBox(height: 32),
-                                  
+
                                   // Timer & Action Meta
                                   Column(
                                     children: [
@@ -253,14 +314,16 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                         text: TextSpan(
                                           style: GoogleFonts.manrope(
                                             fontSize: 14,
-                                            color: context.colors.onSurfaceVariant,
+                                            color:
+                                                context.colors.onSurfaceVariant,
                                             letterSpacing: 0.5,
                                           ),
                                           children: [
                                             TextSpan(text: 'Resend code in '),
                                             TextSpan(
                                               text: '00:55',
-                                              style: GoogleFonts.spaceGrotesk( // using spaceGrotesk for mono feeling
+                                              style: GoogleFonts.spaceGrotesk(
+                                                // using spaceGrotesk for mono feeling
                                                 color: context.colors.onSurface,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -272,8 +335,12 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                       TextButton(
                                         onPressed: null, // Disabled
                                         style: TextButton.styleFrom(
-                                          foregroundColor: context.colors.outline,
-                                          disabledForegroundColor: context.colors.outline.withOpacity(0.5),
+                                          foregroundColor:
+                                              context.colors.outline,
+                                          disabledForegroundColor: context
+                                              .colors
+                                              .outline
+                                              .withOpacity(0.5),
                                         ),
                                         child: Text(
                                           'RESEND CODE',
@@ -290,9 +357,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                               ),
                             ],
                           ),
-                          
+
                           SizedBox(height: 48),
-                          
+
                           // High-Impact Verification Section
                           // Glass-Morphic Context Container
                           Container(
@@ -310,7 +377,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                   child: Icon(
                                     Icons.verified_user,
                                     size: 64,
-                                    color: context.colors.onSurface.withOpacity(0.05),
+                                    color: context.colors.onSurface.withOpacity(
+                                      0.05,
+                                    ),
                                   ),
                                 ),
                                 Column(
@@ -350,7 +419,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                             ),
                           ),
                           SizedBox(height: 32),
-                          
+
                           // Primary Action
                           SizedBox(
                             width: double.infinity,
@@ -363,12 +432,17 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 elevation: 8,
-                                shadowColor: context.colors.primary.withOpacity(0.25),
+                                shadowColor: context.colors.primary.withOpacity(
+                                  0.25,
+                                ),
                               ),
                               child: Ink(
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
-                                    colors: [context.colors.primary, context.colors.primaryContainer],
+                                    colors: [
+                                      context.colors.primary,
+                                      context.colors.primaryContainer,
+                                    ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ),
@@ -386,7 +460,8 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                           ),
                                         )
                                       : Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text(
                                               'VERIFY & CONTINUE',
@@ -394,13 +469,16 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.w900,
                                                 letterSpacing: 1.5,
-                                                color: context.colors.onPrimaryFixed,
+                                                color: context
+                                                    .colors
+                                                    .onPrimaryFixed,
                                               ),
                                             ),
                                             SizedBox(width: 8),
                                             Icon(
                                               Icons.chevron_right,
-                                              color: context.colors.onPrimaryFixed,
+                                              color:
+                                                  context.colors.onPrimaryFixed,
                                             ),
                                           ],
                                         ),
@@ -408,14 +486,14 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                               ),
                             ),
                           ),
-                          
+
                           SizedBox(height: 48),
                         ],
                       ),
                     ),
                   ),
                 ),
-                
+
                 // Trust Badge Footer
                 Padding(
                   padding: EdgeInsets.only(bottom: 24.0),
@@ -423,19 +501,25 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
                           color: context.colors.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(32),
                           border: Border.all(
-                            color: context.colors.outlineVariant.withOpacity(0.1),
+                            color: context.colors.outlineVariant.withOpacity(
+                              0.1,
+                            ),
                           ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              Icons.security, // Using security as shield_with_heart proxy
+                              Icons
+                                  .security, // Using security as shield_with_heart proxy
                               color: context.colors.primary,
                               size: 16,
                             ),
