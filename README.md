@@ -295,26 +295,28 @@ Flow:
 
 1. Open the login screen
 2. Enter the rider's phone number
-3. Enter fixed demo OTP `9324`
+3. Enter that rider's configured demo OTP
 4. Backend issues JWT automatically
 5. Frontend uses that token for dashboard, quotes, policies, claims, wallet, and notifications
 
 ### New user signup
 
-This is the onboarding path for new riders.
+This is the demo-safe onboarding path for new riders.
 
 Flow:
 
 1. Call `POST /api/auth/request-otp`
-2. User receives OTP through Twilio Verify
-3. Call `POST /api/auth/signup` with full rider details and the OTP
-4. Backend verifies OTP, creates rider/platform/wallet records, and issues JWT automatically
+2. User enters the configured demo signup OTP for that phone
+3. Call `POST /api/auth/verify-otp`
+4. Call `POST /api/auth/signup` with full rider details and the `verification_token`
+5. Backend creates rider/platform/wallet records and issues JWT automatically
 5. Frontend uses that token for the normal rider flows
 
-Important Twilio note:
+Important demo note:
 
-- on a Twilio trial account, OTP SMS works only for verified recipient phone numbers
-- use seeded riders plus login OTP `9324` for repeatable demos
+- signup demo numbers are hardcoded for testing and demo stability
+- each signup number can only be used once unless the local store is reset
+- use seeded rider credentials below for repeatable login demos
 
 ### Session lookup
 
@@ -343,7 +345,10 @@ Flutter app connects to `http://<YOUR_WINDOWS_IP>:3000`.
 ### Auth API surface
 
 - `POST /api/auth/request-otp`
+- `POST /api/auth/verify-otp`
 - `POST /api/auth/signup`
+- `POST /api/auth/request-login-otp`
+- `POST /api/auth/verify-login-otp`
 - `POST /api/auth/login`
 - `GET /api/auth/me`
 
@@ -365,15 +370,27 @@ console.log(token);
 
 ### Demo riders
 
-| Name | ID | Zone | Platform |
-|------|-----|------|----------|
-| Asha | `11111111-1111-4111-8111-111111111111` | Koramangala (Bengaluru) | Swiggy |
-| Rohan | `22222222-2222-4222-8222-222222222222` | Whitefield (Bengaluru) | Zomato |
-| Meera | `33333333-3333-4333-8333-444444444444` | Hinjewadi (Pune) | Zomato |
-| Pooja | `44444444-4444-4444-8444-555555555555` | Patrapada (Bhubaneswar) | Swiggy |
-| Aditya | `55555555-5555-4555-8555-666666666666` | Gomti Nagar (Lucknow) | Zomato |
+| Name | ID | Phone | Demo OTP | Zone | Platform |
+|------|-----|-------|----------|------|----------|
+| Asha | `11111111-1111-4111-8111-111111111111` | `9876543210` | `9324` | Koramangala (Bengaluru) | Swiggy |
+| Rohan | `22222222-2222-4222-8222-222222222222` | `9123456780` | `2841` | Whitefield (Bengaluru) | Zomato |
+| Meera | `33333333-3333-4333-8333-444444444444` | `9988776655` | `6157` | Hinjewadi (Pune) | Zomato |
+| Pooja | `44444444-4444-4444-8444-555555555555` | `9345678123` | `4408` | Patrapada (Bhubaneswar) | Swiggy |
+| Aditya | `55555555-5555-4555-8555-666666666666` | `9451203344` | `7712` | Gomti Nagar (Lucknow) | Zomato |
 
-Use their seeded phone numbers with login OTP `9324`.
+Use these seeded phone and OTP pairs for repeatable demo login.
+
+### Demo signup numbers
+
+| Phone | Demo OTP |
+|------|----------|
+| `9012345678` | `1201` |
+| `9012345679` | `1202` |
+| `9012345680` | `1203` |
+| `9012345681` | `1204` |
+| `9012345682` | `1205` |
+
+Use these only for signup testing. Each one can create a new rider once unless you reset the local store.
 
 ## What Is Not Built Yet
 

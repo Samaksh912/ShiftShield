@@ -135,6 +135,20 @@
       "dinner_baseline": 495,
       "last_app_active": "2026-03-31T17:10:00Z",
       "created_at": "2026-03-05T09:00:00Z"
+    },
+    {
+      "id": "de7626e0-82de-4b81-8a55-8c5c496aae12",
+      "phone": "8454081061",
+      "name": "Demo User",
+      "platform": "swiggy",
+      "zone_id": "lucknow_gomti_nagar",
+      "shifts_covered": "both",
+      "payout_preference": "wallet",
+      "upi_id": null,
+      "lunch_baseline": 300,
+      "dinner_baseline": 490,
+      "last_app_active": "2026-04-04T13:17:07.320Z",
+      "created_at": "2026-04-04T13:17:07.320Z"
     }
   ],
   "zones": [
@@ -1879,6 +1893,213 @@
       },
       "valid_until": "2026-04-05T23:59:00+05:30",
       "created_at": "2026-04-01T11:40:37.068Z"
+    },
+    {
+      "id": "6dec4672-9a86-49e5-86f3-c75883b618d5",
+      "rider_id": "11111111-1111-4111-8111-111111111111",
+      "zone_id": "koramangala",
+      "week_start": "2026-04-06",
+      "shifts_covered": "both",
+      "risk_score": 0.28,
+      "risk_band": "low",
+      "premium": 28,
+      "payout_cap": 5280,
+      "explanation": {
+        "top_factors": [
+          {
+            "factor": "Historical triggers",
+            "contribution_pct": 100,
+            "detail": "1 triggers in the last 4 weeks"
+          }
+        ],
+        "summary": "Low risk this week. 1 triggers in the last 4 weeks."
+      },
+      "valid_until": "2026-04-05T23:59:00+05:30",
+      "created_at": "2026-04-03T18:03:44.523Z"
+    },
+    {
+      "id": "b72ea6f2-cfe1-4bdd-99f2-46f20585f279",
+      "rider_id": "11111111-1111-4111-8111-111111111111",
+      "zone_id": "koramangala",
+      "week_start": "2026-04-06",
+      "shifts_covered": "both",
+      "risk_score": 0.28,
+      "risk_band": "low",
+      "premium": 28,
+      "payout_cap": 5280,
+      "explanation": {
+        "top_factors": [
+          {
+            "factor": "Historical triggers",
+            "contribution_pct": 100,
+            "detail": "1 triggers in the last 4 weeks"
+          }
+        ],
+        "summary": "Low risk this week. 1 triggers in the last 4 weeks."
+      },
+      "valid_until": "2026-04-05T23:59:00+05:30",
+      "created_at": "2026-04-03T18:04:38.253Z"
+    },
+    {
+      "id": "61dbd5bc-4aa2-4c23-88ad-63edc9195b74",
+      "rider_id": "11111111-1111-4111-8111-111111111111",
+      "zone_id": "koramangala",
+      "week_start": "2026-04-06",
+      "shifts_covered": "both",
+      "risk_score": 0.28,
+      "risk_band": "low",
+      "premium": 28,
+      "payout_cap": 5280,
+      "explanation": {
+        "top_factors": [
+          {
+            "factor": "Historical triggers",
+            "contribution_pct": 100,
+            "detail": "1 triggers in the last 4 weeks"
+          }
+        ],
+        "summary": "Low risk this week. 1 triggers in the last 4 weeks."
+      },
+      "valid_until": "2026-04-05T23:59:00+05:30",
+      "created_at": "2026-04-03T18:24:45.062Z"
+    },
+    {
+      "id": "547ac7da-88c4-41ce-906b-c73f96b27f3a",
+      "rider_id": "11111111-1111-4111-8111-111111111111",
+      "zone_id": "koramangala",
+      "week_start": "2026-04-06",
+      "shifts_covered": "both",
+      "risk_score": 0.28,
+      "risk_band": "low",
+      "premium": 28,
+      "payout_cap": 5280,
+      "explanation": {
+        "top_factors": [
+          {
+            "factor": "Historical triggers",
+            "contribution_pct": 100,
+            "detail": "1 triggers in the last 4 weeks"
+          }
+        ],
+        "summary": "Low risk this week. 1 triggers in the last 4 weeks."
+      },
+      "valid_until": "2026-04-05T23:59:00+05:30",
+      "created_at": "2026-04-03T18:37:08.229Z"
+    },
+    {
+      "id": "a6412caf-e261-452a-87f1-50e3015feded",
+      "rider_id": "11111111-1111-4111-8111-111111111111",
+      "zone_id": "koramangala",
+      "week_start": "2026-04-06",
+      "shifts_covered": "both",
+      "risk_score": 0.28,
+      "risk_band": "low",
+      "premium": 28,
+      "payout_cap": 5280,
+      "explanation": {
+        "top_factors": [
+          {
+            "factor": "Historical triggers",
+            "contribution_pct": 100,
+            "detail": "1 triggers in the last 4 weeks"
+          }
+        ],
+        "summary": "Low risk this week. 1 triggers in the last 4 weeks."
+      },
+      "valid_until": "2026-04-05T23:59:00+05:30",
+      "created_at": "2026-04-03T18:37:14.181Z"
+    },
+    {
+      "id": "05bef4c6-bf75-46a7-8882-e0ac3ab7dff4",
+      "rider_id": "11111111-1111-4111-8111-111111111111",
+      "zone_id": "koramangala",
+      "week_start": "2026-04-06",
+      "shifts_covered": "both",
+      "risk_score": 0.28,
+      "risk_band": "low",
+      "premium": 28,
+      "payout_cap": 5280,
+      "explanation": {
+        "top_factors": [
+          {
+            "factor": "Historical triggers",
+            "contribution_pct": 100,
+            "detail": "1 triggers in the last 4 weeks"
+          }
+        ],
+        "summary": "Low risk this week. 1 triggers in the last 4 weeks."
+      },
+      "valid_until": "2026-04-05T23:59:00+05:30",
+      "created_at": "2026-04-03T18:37:25.125Z"
+    },
+    {
+      "id": "8072848e-45e7-4a9b-a11a-1b3e46624e8e",
+      "rider_id": "11111111-1111-4111-8111-111111111111",
+      "zone_id": "koramangala",
+      "week_start": "2026-04-06",
+      "shifts_covered": "both",
+      "risk_score": 0.28,
+      "risk_band": "low",
+      "premium": 28,
+      "payout_cap": 5280,
+      "explanation": {
+        "top_factors": [
+          {
+            "factor": "Historical triggers",
+            "contribution_pct": 100,
+            "detail": "1 triggers in the last 4 weeks"
+          }
+        ],
+        "summary": "Low risk this week. 1 triggers in the last 4 weeks."
+      },
+      "valid_until": "2026-04-05T23:59:00+05:30",
+      "created_at": "2026-04-03T18:38:25.502Z"
+    },
+    {
+      "id": "6a33a4f0-b16e-4ef3-a8a6-87233848aee7",
+      "rider_id": "11111111-1111-4111-8111-111111111111",
+      "zone_id": "koramangala",
+      "week_start": "2026-04-06",
+      "shifts_covered": "both",
+      "risk_score": 0.28,
+      "risk_band": "low",
+      "premium": 28,
+      "payout_cap": 5280,
+      "explanation": {
+        "top_factors": [
+          {
+            "factor": "Historical triggers",
+            "contribution_pct": 100,
+            "detail": "1 triggers in the last 4 weeks"
+          }
+        ],
+        "summary": "Low risk this week. 1 triggers in the last 4 weeks."
+      },
+      "valid_until": "2026-04-05T23:59:00+05:30",
+      "created_at": "2026-04-04T14:49:58.723Z"
+    },
+    {
+      "id": "49cf49a0-fcac-4ff8-b504-4f8dc36051fa",
+      "rider_id": "11111111-1111-4111-8111-111111111111",
+      "zone_id": "koramangala",
+      "week_start": "2026-04-06",
+      "shifts_covered": "both",
+      "risk_score": 0.28,
+      "risk_band": "low",
+      "premium": 28,
+      "payout_cap": 5280,
+      "explanation": {
+        "top_factors": [
+          {
+            "factor": "Historical triggers",
+            "contribution_pct": 100,
+            "detail": "1 triggers in the last 4 weeks"
+          }
+        ],
+        "summary": "Low risk this week. 1 triggers in the last 4 weeks."
+      },
+      "valid_until": "2026-04-05T23:59:00+05:30",
+      "created_at": "2026-04-04T15:03:08.785Z"
     }
   ],
   "mock_platform_riders": [
@@ -1946,6 +2167,19 @@
       "active_days_last_30": 8,
       "last_active": "2026-03-31T17:10:00Z",
       "account_age_months": 7
+    },
+    {
+      "id": "4ae6982d-e315-41ff-9d68-a41234b8447b",
+      "phone": "8454081061",
+      "platform": "swiggy",
+      "zone_id": "lucknow_gomti_nagar",
+      "rider_status": "active",
+      "avg_lunch_earnings": 300,
+      "avg_dinner_earnings": 490,
+      "active_days_per_week": 2,
+      "active_days_last_30": 8,
+      "last_active": "2026-04-04T13:17:07.320Z",
+      "account_age_months": 6
     }
   ],
   "weekly_policies": [
@@ -1960,14 +2194,26 @@
       "payout_cap": 5280,
       "status": "active",
       "created_at": "2026-03-28T14:00:00Z"
+    },
+    {
+      "id": "8cbbad5a-7160-4cd7-9640-33882b61db5e",
+      "rider_id": "11111111-1111-4111-8111-111111111111",
+      "quote_id": "6dec4672-9a86-49e5-86f3-c75883b618d5",
+      "week_start": "2026-04-06",
+      "week_end": "2026-04-12",
+      "shifts_covered": "both",
+      "premium_paid": 28,
+      "payout_cap": 5280,
+      "status": "scheduled",
+      "created_at": "2026-04-03T18:03:47.542Z"
     }
   ],
   "wallets": [
     {
       "id": "wallet-asha",
       "rider_id": "11111111-1111-4111-8111-111111111111",
-      "balance": 356,
-      "updated_at": "2026-03-31T20:16:00Z"
+      "balance": 328,
+      "updated_at": "2026-04-03T18:03:47.542Z"
     },
     {
       "id": "wallet-rohan",
@@ -1992,6 +2238,12 @@
       "rider_id": "55555555-5555-4555-8555-666666666666",
       "balance": 210,
       "updated_at": "2026-03-31T18:10:00Z"
+    },
+    {
+      "id": "wallet-de7626e0-82de-4b81-8a55-8c5c496aae12",
+      "rider_id": "de7626e0-82de-4b81-8a55-8c5c496aae12",
+      "balance": 0,
+      "updated_at": "2026-04-04T13:17:07.320Z"
     }
   ],
   "wallet_transactions": [
@@ -2014,8 +2266,29 @@
       "reference_id": "policy-asha-active",
       "description": "Weekly premium — Mar 30 to Apr 5",
       "created_at": "2026-03-28T14:00:00Z"
+    },
+    {
+      "id": "ff98bbb6-9400-4ee4-8daf-63d3f04949ea",
+      "wallet_id": "wallet-asha",
+      "type": "debit_premium",
+      "amount": -28,
+      "reference_type": "policy",
+      "reference_id": "8cbbad5a-7160-4cd7-9640-33882b61db5e",
+      "description": "Weekly premium — 2026-04-06 to 2026-04-12",
+      "created_at": "2026-04-03T18:03:47.542Z"
     }
   ],
   "claims": [],
-  "notifications": []
+  "notifications": [
+    {
+      "id": "7d2bb982-0abe-47b3-94b7-46e91610fc92",
+      "rider_id": "11111111-1111-4111-8111-111111111111",
+      "type": "policy_created",
+      "title": "Policy created",
+      "message": "Your policy is confirmed for 2026-04-06 to 2026-04-12.",
+      "is_read": false,
+      "metadata": null,
+      "created_at": "2026-04-03T18:03:47.543Z"
+    }
+  ]
 }

@@ -22,27 +22,6 @@ class ApiService {
     };
   }
 
-  /// POST /api/auth/request-login-otp
-  static Future<Map<String, dynamic>> sendOtp(String phone) {
-    return _post('/api/auth/request-login-otp', {'phone': phone});
-  }
-
-  /// POST /api/auth/verify-login-otp
-  static Future<Map<String, dynamic>> verifyLoginOtp(String phone, String otp) {
-    return _post('/api/auth/verify-login-otp', {'phone': phone, 'otp': otp});
-  }
-
-  /// POST /api/auth/login
-  static Future<Map<String, dynamic>> login(
-    String phone,
-    String verificationToken,
-  ) {
-    return _post('/api/auth/login', {
-      'phone': phone,
-      'verification_token': verificationToken,
-    });
-  }
-
   static Map<String, dynamic> _handleResponse(http.Response response) {
     final body = jsonDecode(response.body) as Map<String, dynamic>;
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -50,7 +29,7 @@ class ApiService {
     }
     throw ApiException(
       statusCode: response.statusCode,
-      errorCode: body['error'] as String? ?? 'unknown_error',
+      errorCode: body['error'] as String? ?? body['code'] as String? ?? 'unknown_error',
       message: body['message'] as String? ?? 'Something went wrong.',
       rawBody: body,
     );
@@ -89,56 +68,73 @@ class ApiService {
   }
 
   // ─────────────────────────────────────────────
-  // AUTH
+  // AUTH — SIGNUP FLOW
   // ─────────────────────────────────────────────
 
-  /// POST /api/auth/send-otp
-  static Future<Map<String, dynamic>> sendOtp(String phone) {
+  /// POST /api/auth/request-otp  (signup OTP)
+  static Future<Map<String, dynamic>> sendSignupOtp(String phone) {
     return _post('/api/auth/request-otp', {'phone': phone});
   }
 
-  /// POST /api/auth/verify-otp
-  /// Returns { token, is_new_user, rider }
-  static Future<Map<String, dynamic>> verifyOtp(String phone, String otp) {
+  /// POST /api/auth/verify-otp  (signup OTP verification)
+  /// Returns { verified, verification_token, ... }
+  static Future<Map<String, dynamic>> verifySignupOtp(String phone, String otp) {
     return _post('/api/auth/verify-otp', {'phone': phone, 'otp': otp});
   }
 
-  // ─────────────────────────────────────────────
-  // ZONES
-  // ─────────────────────────────────────────────
-
-  /// GET /api/zones
-  static Future<List<dynamic>> getZones() async {
-    final data = await _get('/api/zones');
-    return data['zones'] as List<dynamic>;
+  /// POST /api/auth/signup  (complete signup with profile)
+  static Future<Map<String, dynamic>> signup(Map<String, dynamic> body) {
+    return _post('/api/auth/signup', body);
   }
 
   // ─────────────────────────────────────────────
-  // MOCK PLATFORM
+  // AUTH — LOGIN FLOW
   // ─────────────────────────────────────────────
 
-  /// GET /api/mock-platform/rider/:phone
-  static Future<Map<String, dynamic>> getMockPlatformRider(String phone) {
-    return _get('/api/mock-platform/rider/$phone');
+  /// POST /api/auth/request-login-otp
+  static Future<Map<String, dynamic>> sendLoginOtp(String phone) {
+    return _post('/api/auth/request-login-otp', {'phone': phone});
+  }
+
+  /// POST /api/auth/verify-login-otp
+  /// Returns { verified, verification_token, ... }
+  static Future<Map<String, dynamic>> verifyLoginOtp(String phone, String otp) {
+    return _post('/api/auth/verify-login-otp', {'phone': phone, 'otp': otp});
+  }
+
+  /// POST /api/auth/login
+  static Future<Map<String, dynamic>> login(
+    String phone,
+    String verificationToken,
+  ) {
+    return _post('/api/auth/login', {
+      'phone': phone,
+      'verification_token': verificationToken,
+    });
   }
 
   // ─────────────────────────────────────────────
-  // RIDER PROFILE
+  // AUTH — SESSION
   // ─────────────────────────────────────────────
 
-  /// POST /api/riders/profile
-  static Future<Map<String, dynamic>> createProfile(Map<String, dynamic> body) {
-    return _post('/api/riders/profile', body);
-  }
-
-  /// GET /api/riders/me
+  /// GET /api/auth/me
   static Future<Map<String, dynamic>> getMe() {
-    return _get('/api/riders/me');
+    return _get('/api/auth/me');
   }
 
-  /// PUT /api/riders/me
+  /// PUT /api/auth/me  (update rider profile — when backend supports it)
   static Future<Map<String, dynamic>> updateMe(Map<String, dynamic> body) {
-    return _put('/api/riders/me', body);
+    return _put('/api/auth/me', body);
+  }
+
+  // ─────────────────────────────────────────────
+  // CITIES & ZONES
+  // ─────────────────────────────────────────────
+
+  /// GET /api/cities
+  /// Returns { cities: [ { id, name, zones: [...] }, ... ] }
+  static Future<Map<String, dynamic>> getCities() {
+    return _get('/api/cities');
   }
 
   // ─────────────────────────────────────────────
@@ -153,6 +149,7 @@ class ApiService {
   // ─────────────────────────────────────────────
   // POLICIES
   // ─────────────────────────────────────────────
+
   /// POST /api/policies/create
   static Future<Map<String, dynamic>> createPolicy(
     String quoteId,
@@ -186,6 +183,7 @@ class ApiService {
   static Future<Map<String, dynamic>> getPolicyById(String policyId) {
     return _get('/api/policies/$policyId');
   }
+
   // ─────────────────────────────────────────────
   // DASHBOARD
   // ─────────────────────────────────────────────
@@ -222,6 +220,10 @@ class ApiService {
   static Future<Map<String, dynamic>> getClaims() {
     return _get('/api/claims');
   }
+
+  // ─────────────────────────────────────────────
+  // NOTIFICATIONS
+  // ─────────────────────────────────────────────
 
   /// GET /api/notifications
   static Future<Map<String, dynamic>> getNotifications() {

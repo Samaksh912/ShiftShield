@@ -27,16 +27,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
     try {
-      // Demo bypass — skip API entirely for known demo numbers
-      if (AppConfig.isDemoPhone(mobileNumber)) {
+      // Demo bypass — skip API entirely for known demo login numbers
+      if (AppConfig.isDemoLoginPhone(mobileNumber)) {
         await AuthService.savePhone(mobileNumber);
         if (!mounted) return;
-        context.push(AppRoutes.verifyOtpPath(mobileNumber));
+        context.push(AppRoutes.verifyOtpPath(mobileNumber), extra: {'isLogin': true});
         return;
       }
 
       // Real API flow
-      await ApiService.sendOtp(mobileNumber);
+      await ApiService.sendLoginOtp(mobileNumber);
       await AuthService.savePhone(mobileNumber);
       if (!mounted) return;
       context.push(AppRoutes.verifyOtpPath(mobileNumber));

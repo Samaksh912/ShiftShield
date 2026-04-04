@@ -92,14 +92,22 @@ final GoRouter appRouter = GoRouter(
       name: RouteNames.verifyOtp,
       builder: (context, state) {
         final phone = state.pathParameters['phone'] ?? '';
-        return VerifyOtpScreen(mobileNumber: phone);
+        final extra = state.extra as Map<String, dynamic>?;
+        final isLogin = extra?['isLogin'] as bool? ?? true;
+        return VerifyOtpScreen(mobileNumber: phone, isLogin: isLogin);
       },
     ),
 
     GoRoute(
       path: AppRoutes.riderProfile,
       name: RouteNames.riderProfile,
-      builder: (context, state) => const RiderProfileScreen(),
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return RiderProfileScreen(
+          phone: extra?['phone'] as String? ?? '',
+          verificationToken: extra?['verification_token'] as String? ?? '',
+        );
+      },
     ),
 
     // ── Dashboard (main layout with bottom nav) ──────────────────────────

@@ -10,8 +10,13 @@ import '../../../core/config.dart';
 
 class VerifyOtpScreen extends StatefulWidget {
   final String mobileNumber;
+  final bool isLogin;
 
-  const VerifyOtpScreen({super.key, required this.mobileNumber});
+  const VerifyOtpScreen({
+    super.key,
+    required this.mobileNumber,
+    this.isLogin = true,
+  });
 
   @override
   State<VerifyOtpScreen> createState() => _VerifyOtpScreenState();
@@ -56,8 +61,12 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     setState(() => _isLoading = true);
     try {
       // Demo bypass — check hardcoded credentials before hitting API
-      if (AppConfig.isDemoPhone(widget.mobileNumber)) {
-        final expectedOtp = AppConfig.demoOtpFor(widget.mobileNumber);
+      final isDemoLogin = widget.isLogin && AppConfig.isDemoLoginPhone(widget.mobileNumber);
+      final isDemoSignup = !widget.isLogin && AppConfig.isDemoSignupPhone(widget.mobileNumber);
+      if (isDemoLogin || isDemoSignup) {
+        final expectedOtp = widget.isLogin
+            ? AppConfig.demoLoginOtpFor(widget.mobileNumber)
+            : AppConfig.demoSignupOtpFor(widget.mobileNumber);
         if (otp != expectedOtp) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -71,25 +80,50 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
           _focusNodes[0].requestFocus();
           return;
         }
-        // Valid demo OTP — save token and go to dashboard
-        await AuthService.saveToken(AppConfig.devJwt);
-        if (!mounted) return;
-        context.go(AppRoutes.dashboard);
+        if (isDemoLogin) {
+          // Valid demo login OTP — save token and go to dashboard
+          await AuthService.saveToken(AppConfig.devJwt);
+          if (!mounted) return;
+          context.go(AppRoutes.dashboard);
+        } else {
+          // Valid demo signup OTP — go to rider profile (no verification token for demo)
+          if (!mounted) return;
+          context.go(
+            AppRoutes.riderProfile,
+            extra: {
+              'phone': widget.mobileNumber,
+              'verification_token': '',
+            },
+          );
+        }
         return;
       }
 
       // Real API flow for non-demo numbers
-      final data = await ApiService.verifyOtp(widget.mobileNumber, otp);
-      final token = data['token'] as String;
-      final isNewUser = data['is_new_user'] as bool? ?? true;
+      if (widget.isLogin) {
+        // Login flow: verify-login-otp → login → get JWT
+        final verifyData = await ApiService.verifyLoginOtp(widget.mobileNumber, otp);
+        final verificationToken = verifyData['verification_token'] as String;
 
-      await AuthService.saveToken(token);
-      if (!mounted) return;
+        final loginData = await ApiService.login(widget.mobileNumber, verificationToken);
+        final token = loginData['token'] as String;
 
-      if (isNewUser) {
-        context.go(AppRoutes.riderProfile);
-      } else {
+        await AuthService.saveToken(token);
+        if (!mounted) return;
         context.go(AppRoutes.dashboard);
+      } else {
+        // Signup flow: verify-otp → get verification_token → rider profile
+        final verifyData = await ApiService.verifySignupOtp(widget.mobileNumber, otp);
+        final verificationToken = verifyData['verification_token'] as String;
+
+        if (!mounted) return;
+        context.go(
+          AppRoutes.riderProfile,
+          extra: {
+            'phone': widget.mobileNumber,
+            'verification_token': verificationToken,
+          },
+        );
       }
     } on ApiException catch (e) {
       if (!mounted) return;

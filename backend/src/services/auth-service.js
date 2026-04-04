@@ -3,9 +3,24 @@ const jwt = require("jsonwebtoken");
 const { getConfig } = require("../utils/config");
 const { normalizePhone, isNormalizedPhone } = require("../utils/phone");
 
-const DEMO_LOGIN_OTP = "9324";
+const DEMO_LOGIN_OTP_BY_PHONE = {
+  "9876543210": "9324",
+  "9123456780": "2841",
+  "9988776655": "6157",
+  "9345678123": "4408",
+  "9451203344": "7712"
+};
+const DEMO_SIGNUP_OTP_BY_PHONE = {
+  "9012345678": "1201",
+  "9012345679": "1202",
+  "9012345680": "1203",
+  "9012345681": "1204",
+  "9012345682": "1205"
+};
 const TOKEN_EXPIRES_IN = "7d";
 const TOKEN_EXPIRES_IN_SECONDS = 7 * 24 * 60 * 60;
+const OTP_VERIFICATION_EXPIRES_IN = "10m";
+const OTP_VERIFICATION_EXPIRES_IN_SECONDS = 10 * 60;
 const VALID_PLATFORMS = new Set(["swiggy", "zomato"]);
 const VALID_SHIFTS = new Set(["lunch", "dinner", "both"]);
 const VALID_PAYOUT_PREFERENCES = new Set(["wallet", "upi"]);
@@ -58,6 +73,26 @@ function buildSessionPayload(token, rider, zone, platformRider, authType) {
   };
 }
 
+function getDemoLoginOtp(rawPhone, normalizedPhone) {
+  const candidates = buildPhoneCandidates(rawPhone, normalizedPhone);
+  for (const candidate of candidates) {
+    if (DEMO_LOGIN_OTP_BY_PHONE[candidate]) {
+      return DEMO_LOGIN_OTP_BY_PHONE[candidate];
+    }
+  }
+  return null;
+}
+
+function getDemoSignupOtp(rawPhone, normalizedPhone) {
+  const candidates = buildPhoneCandidates(rawPhone, normalizedPhone);
+  for (const candidate of candidates) {
+    if (DEMO_SIGNUP_OTP_BY_PHONE[candidate]) {
+      return DEMO_SIGNUP_OTP_BY_PHONE[candidate];
+    }
+  }
+  return null;
+}
+
 class AuthService {
   constructor({ dataStore, verificationService }) {
     this.dataStore = dataStore;
@@ -74,6 +109,50 @@ class AuthService {
       this.config.jwtSecret,
       { expiresIn: TOKEN_EXPIRES_IN }
     );
+  }
+
+  signVerificationToken(normalizedPhone, purpose) {
+    return jwt.sign(
+      {
+        phone: normalizedPhone,
+        otp_purpose: purpose,
+        token_type: "otp_verification"
+      },
+      this.config.jwtSecret,
+      { expiresIn: OTP_VERIFICATION_EXPIRES_IN }
+    );
+  }
+
+  verifyVerificationToken(token, expectedPhone, expectedPurpose) {
+    if (typeof token !== "string" || !token.trim()) {
+      throw buildError("verification_token is required", {
+        statusCode: 401,
+        code: "invalid_verification_token"
+      });
+    }
+
+    let payload;
+    try {
+      payload = jwt.verify(token.trim(), this.config.jwtSecret);
+    } catch (_error) {
+      throw buildError("Invalid verification token", {
+        statusCode: 401,
+        code: "invalid_verification_token"
+      });
+    }
+
+    if (
+      payload?.token_type !== "otp_verification" ||
+      payload?.otp_purpose !== expectedPurpose ||
+      payload?.phone !== expectedPhone
+    ) {
+      throw buildError("Invalid verification token", {
+        statusCode: 401,
+        code: "invalid_verification_token"
+      });
+    }
+
+    return payload;
   }
 
   async validateGeography(cityId, zoneId) {
@@ -108,7 +187,7 @@ class AuthService {
     return null;
   }
 
-  async requestOtp({ phone, purpose }) {
+  async requestSignupOtp({ phone }) {
     const rawPhone = typeof phone === "string" ? phone.trim() : "";
     const normalizedPhone = normalizePhone(phone);
 
@@ -116,11 +195,115 @@ class AuthService {
       throw buildError("phone must be a valid Indian mobile number or E.164 phone number");
     }
 
-    const verification = await this.verificationService.requestOtp(normalizedPhone);
+    if (!getDemoSignupOtp(rawPhone, normalizedPhone)) {
+      throw buildError("No demo signup OTP is configured for this phone", {
+        statusCode: 400,
+        code: "demo_signup_unavailable"
+      });
+    }
 
     return {
-      ...verification,
+      otp_sent: true,
+      auth_type: "demo_signup",
+      message: "Demo signup OTP requested successfully",
       phone: normalizedPhone
+    };
+  }
+
+  async verifySignupOtp({ phone, otp }) {
+    const rawPhone = typeof phone === "string" ? phone.trim() : "";
+    const normalizedPhone = normalizePhone(phone);
+    const code = typeof otp === "string" ? otp.trim() : "";
+
+    if (!isNormalizedPhone(normalizedPhone) || !code) {
+      throw buildError("Invalid phone or otp", {
+        statusCode: 401,
+        code: "invalid_signup_otp"
+      });
+    }
+
+    const expectedOtp = getDemoSignupOtp(rawPhone, normalizedPhone);
+    if (!expectedOtp || code !== expectedOtp) {
+      throw buildError("Invalid otp", {
+        statusCode: 401,
+        code: "invalid_signup_otp"
+      });
+    }
+
+    return {
+      verified: true,
+      auth_type: "demo_signup",
+      phone: normalizedPhone,
+      verification_token: this.signVerificationToken(normalizedPhone, "signup"),
+      expires_in: OTP_VERIFICATION_EXPIRES_IN_SECONDS
+    };
+  }
+
+  async requestLoginOtp({ phone }) {
+    const rawPhone = typeof phone === "string" ? phone.trim() : "";
+    const normalizedPhone = normalizePhone(phone);
+
+    if (!isNormalizedPhone(normalizedPhone)) {
+      throw buildError("phone must be a valid Indian mobile number or E.164 phone number");
+    }
+
+    const rider = await this.findRiderByPhone(rawPhone, normalizedPhone);
+    if (!rider) {
+      throw buildError("Rider not found for this phone", {
+        statusCode: 404,
+        code: "not_found"
+      });
+    }
+
+    if (!getDemoLoginOtp(rawPhone, normalizedPhone)) {
+      throw buildError("No demo login OTP is configured for this rider", {
+        statusCode: 400,
+        code: "demo_login_unavailable"
+      });
+    }
+
+    return {
+      otp_sent: true,
+      auth_type: "demo_login",
+      phone: normalizedPhone,
+      message: "Demo login OTP requested successfully"
+    };
+  }
+
+  async verifyLoginOtp({ phone, otp }) {
+    const rawPhone = typeof phone === "string" ? phone.trim() : "";
+    const normalizedPhone = normalizePhone(phone);
+    const code = typeof otp === "string" ? otp.trim() : "";
+
+    if (!isNormalizedPhone(normalizedPhone) || !code) {
+      throw buildError("Invalid phone or otp", {
+        statusCode: 401,
+        code: "invalid_login"
+      });
+    }
+
+    const rider = await this.findRiderByPhone(rawPhone, normalizedPhone);
+    if (!rider) {
+      throw buildError("Rider not found for this phone", {
+        statusCode: 404,
+        code: "not_found"
+      });
+    }
+
+    const expectedOtp = getDemoLoginOtp(rawPhone, normalizedPhone);
+    if (!expectedOtp || code !== expectedOtp) {
+      throw buildError("Invalid phone or otp", {
+        statusCode: 401,
+        code: "invalid_login"
+      });
+    }
+
+    return {
+      verified: true,
+      auth_type: "demo_login",
+      phone: normalizedPhone,
+      verification_token: this.signVerificationToken(normalizedPhone, "login"),
+      expires_in: OTP_VERIFICATION_EXPIRES_IN_SECONDS
     };
   }
 
@@ -137,8 +320,19 @@ class AuthService {
       typeof payload?.payout_preference === "string" ? payload.payout_preference.trim().toLowerCase() : "";
     const upiId = typeof payload?.upi_id === "string" && payload.upi_id.trim() ? payload.upi_id.trim() : null;
     const otp = typeof payload?.otp === "string" ? payload.otp.trim() : "";
+    const verificationToken =
+      typeof payload?.verification_token === "string" ? payload.verification_token.trim() : "";
 
-    if (!name || !normalizedPhone || !platform || !cityId || !zoneId || !shiftsCovered || !payoutPreference || !otp) {
+    if (
+      !name ||
+      !normalizedPhone ||
+      !platform ||
+      !cityId ||
+      !zoneId ||
+      !shiftsCovered ||
+      !payoutPreference ||
+      (!otp && !verificationToken)
+    ) {
       throw buildError("Missing required signup fields");
     }
 
@@ -162,24 +356,24 @@ class AuthService {
       throw buildError("upi_id is required when payout_preference is upi");
     }
 
-    try {
-      await this.verificationService.verifyOtp(normalizedPhone, otp);
-    } catch (error) {
-      if (error.code === "invalid_otp") {
-        throw buildError("Invalid otp", {
-          statusCode: 401,
-          code: "invalid_signup_otp"
-        });
-      }
-      throw error;
-    }
-
     const existingRider = await this.findRiderByPhone(rawPhone, normalizedPhone);
     if (existingRider) {
       throw buildError("A rider is already registered with this phone", {
         statusCode: 409,
         code: "duplicate_registration"
       });
+    }
+
+    if (verificationToken) {
+      this.verifyVerificationToken(verificationToken, normalizedPhone, "signup");
+    } else {
+      const expectedOtp = getDemoSignupOtp(rawPhone, normalizedPhone);
+      if (!expectedOtp || otp !== expectedOtp) {
+        throw buildError("Invalid otp", {
+          statusCode: 401,
+          code: "invalid_signup_otp"
+        });
+      }
     }
 
     const { zone } = await this.validateGeography(cityId, zoneId);
@@ -225,14 +419,19 @@ class AuthService {
     }
 
     const token = this.signToken(rider);
-    return buildSessionPayload(token, rider, zone, platformRider, "twilio_verify");
+    return buildSessionPayload(token, rider, zone, platformRider, "demo_signup");
   }
 
-  async login({ phone, otp }) {
+  async login({ phone, otp, verification_token: verificationTokenValue }) {
     const rawPhone = typeof phone === "string" ? phone.trim() : "";
     const normalizedPhone = normalizePhone(phone);
+    const verificationToken =
+      typeof verificationTokenValue === "string" ? verificationTokenValue.trim() : "";
 
-    if (!isNormalizedPhone(normalizedPhone) || typeof otp !== "string" || !otp.trim()) {
+    if (
+      !isNormalizedPhone(normalizedPhone) ||
+      ((!verificationToken) && (typeof otp !== "string" || !otp.trim()))
+    ) {
       throw buildError("Invalid phone or otp", {
         statusCode: 401,
         code: "invalid_login"
@@ -247,11 +446,16 @@ class AuthService {
       });
     }
 
-    if (otp.trim() !== DEMO_LOGIN_OTP) {
-      throw buildError("Invalid phone or otp", {
-        statusCode: 401,
-        code: "invalid_login"
-      });
+    if (verificationToken) {
+      this.verifyVerificationToken(verificationToken, normalizedPhone, "login");
+    } else {
+      const expectedOtp = getDemoLoginOtp(rawPhone, normalizedPhone);
+      if (!expectedOtp || otp.trim() !== expectedOtp) {
+        throw buildError("Invalid phone or otp", {
+          statusCode: 401,
+          code: "invalid_login"
+        });
+      }
     }
 
     const [zone, platformRider] = await Promise.all([

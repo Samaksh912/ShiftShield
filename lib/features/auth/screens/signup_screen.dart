@@ -26,15 +26,15 @@ class _SignupScreenState extends State<SignupScreen> {
 
     setState(() => _isLoading = true);
     try {
-      // Demo bypass — skip API entirely for known demo numbers
-      if (AppConfig.isDemoPhone(mobileNumber)) {
+      // Demo bypass — skip API entirely for known demo signup numbers
+      if (AppConfig.isDemoSignupPhone(mobileNumber)) {
         await AuthService.savePhone(mobileNumber);
         if (!mounted) return;
-        context.push(AppRoutes.verifyOtpPath(mobileNumber));
+        context.push(AppRoutes.verifyOtpPath(mobileNumber), extra: {'isLogin': false});
         return;
       }
 
-      await ApiService.sendOtp(mobileNumber);
+      await ApiService.sendSignupOtp(mobileNumber);
       await AuthService.savePhone(mobileNumber);
       if (!mounted) return;
       context.push(AppRoutes.verifyOtpPath(mobileNumber));

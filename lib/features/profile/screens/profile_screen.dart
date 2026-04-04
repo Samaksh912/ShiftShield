@@ -48,17 +48,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final responses = await Future.wait([
         ApiService.getMe(),
-        ApiService.getZones(),
+        ApiService.getCities(),
         ApiService.getCurrentPolicy().catchError((_) => <String, dynamic>{}),
       ]);
 
       final riderRes = responses[0] as Map<String, dynamic>;
-      final zonesRes = responses[1] as Map<String, dynamic>;
+      final citiesRes = responses[1] as Map<String, dynamic>;
       final policyRes = responses[2] as Map<String, dynamic>;
+
+      // Flatten zones from all cities
+      final cities = (citiesRes['cities'] as List<dynamic>?) ?? [];
+      final allZones = <dynamic>[];
+      for (final city in cities) {
+        final cityMap = city as Map<String, dynamic>;
+        final cityZones = (cityMap['zones'] as List<dynamic>?) ?? [];
+        allZones.addAll(cityZones);
+      }
 
       _setupState(
         riderData: riderRes['rider'],
-        zonesData: zonesRes['zones'] ?? [],
+        zonesData: allZones,
         hasPolicy:
             policyRes.containsKey('policy') && policyRes['policy'] != null,
       );

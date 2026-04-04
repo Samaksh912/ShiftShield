@@ -93,17 +93,51 @@ test("request-otp returns a demo-safe success response for signup", async () => 
   assert.equal(response.status, 200);
   assert.deepEqual(response.body, {
     otp_sent: true,
-    auth_type: "twilio_verify",
+    auth_type: "demo_signup",
     phone: "+919012345678",
-    message: "OTP sent successfully"
+    message: "Demo signup OTP requested successfully"
   });
-  assert.deepEqual(verificationService.requestedPhones, ["+919012345678"]);
+  assert.deepEqual(verificationService.requestedPhones, []);
 });
 
-test("signup creates a demo-safe rider session and wallet-ready profile", async () => {
+test("verify-otp returns a verification token for signup", async () => {
   const { dataStore } = createTestDataStore();
   const verificationService = createFakeVerificationService();
   const app = buildApp({ dataStore, verificationService });
+
+  const response = await invokeApp(app, {
+    method: "POST",
+    url: "/api/auth/verify-otp",
+    headers: { "content-type": "application/json" },
+    body: {
+      phone: "9012345678",
+      otp: "1201"
+    }
+  });
+
+  assert.equal(response.status, 200);
+  assert.equal(response.body.verified, true);
+  assert.equal(response.body.auth_type, "demo_signup");
+  assert.equal(response.body.phone, "+919012345678");
+  assert.equal(typeof response.body.verification_token, "string");
+  assert.equal(response.body.expires_in, 600);
+  assert.deepEqual(verificationService.verifiedOtps, []);
+});
+
+test("signup creates a demo-safe rider session and wallet-ready profile after explicit otp verification", async () => {
+  const { dataStore } = createTestDataStore();
+  const verificationService = createFakeVerificationService();
+  const app = buildApp({ dataStore, verificationService });
+
+  const verifyResponse = await invokeApp(app, {
+    method: "POST",
+    url: "/api/auth/verify-otp",
+    headers: { "content-type": "application/json" },
+    body: {
+      phone: "9012345678",
+      otp: "1201"
+    }
+  });
 
   const response = await invokeApp(app, {
     method: "POST",
@@ -117,7 +151,7 @@ test("signup creates a demo-safe rider session and wallet-ready profile", async 
       zone_id: "lucknow_gomti_nagar",
       shifts_covered: "both",
       payout_preference: "wallet",
-      otp: "123456"
+      verification_token: verifyResponse.body.verification_token
     }
   });
 
@@ -127,9 +161,9 @@ test("signup creates a demo-safe rider session and wallet-ready profile", async 
   assert.equal(response.body.rider.city_id, "lucknow");
   assert.equal(response.body.rider.zone_id, "lucknow_gomti_nagar");
   assert.equal(response.body.rider.active_days_last_30, 8);
-  assert.equal(response.body.session.auth_type, "twilio_verify");
+  assert.equal(response.body.session.auth_type, "demo_signup");
   assert.equal(response.body.session.expires_in, 604800);
-  assert.deepEqual(verificationService.verifiedOtps, [{ phone: "+919012345678", otp: "123456" }]);
+  assert.deepEqual(verificationService.verifiedOtps, []);
 
   const rider = await dataStore.getRiderByPhone("9012345678");
   const platformRider = await dataStore.getMockPlatformRiderByPhone("9012345678");
@@ -141,23 +175,17 @@ test("signup creates a demo-safe rider session and wallet-ready profile", async 
   assert.equal(wallet.balance, 0);
 });
 
-test("signup rejects a bad OTP", async () => {
+test("verify-otp rejects a bad signup OTP", async () => {
   const { dataStore } = createTestDataStore();
   const verificationService = createFakeVerificationService({ shouldApprove: false });
   const app = buildApp({ dataStore, verificationService });
 
   const response = await invokeApp(app, {
     method: "POST",
-    url: "/api/auth/signup",
+    url: "/api/auth/verify-otp",
     headers: { "content-type": "application/json" },
     body: {
-      name: "Demo Rider",
       phone: "9012345678",
-      platform: "swiggy",
-      city_id: "lucknow",
-      zone_id: "lucknow_gomti_nagar",
-      shifts_covered: "both",
-      payout_preference: "wallet",
       otp: "000000"
     }
   });
@@ -167,6 +195,7 @@ test("signup rejects a bad OTP", async () => {
     error: "invalid_signup_otp",
     message: "Invalid otp"
   });
+  assert.deepEqual(verificationService.verifiedOtps, []);
 });
 
 test("signup rejects duplicate phone registration", async () => {
@@ -186,7 +215,7 @@ test("signup rejects duplicate phone registration", async () => {
       zone_id: "koramangala",
       shifts_covered: "both",
       payout_preference: "wallet",
-      otp: "123456"
+      otp: "9324"
     }
   });
 
@@ -208,14 +237,14 @@ test("signup rejects invalid city and zone combinations", async () => {
     headers: { "content-type": "application/json" },
     body: {
       name: "Broken Rider",
-      phone: "9000000000",
+      phone: "9012345679",
       platform: "zomato",
       city_id: "bengaluru",
       zone_id: "lucknow_gomti_nagar",
       shifts_covered: "dinner",
       payout_preference: "upi",
       upi_id: "demo@okaxis",
-      otp: "123456"
+      otp: "1202"
     }
   });
 
@@ -226,10 +255,42 @@ test("signup rejects invalid city and zone combinations", async () => {
   });
 });
 
-test("login succeeds for an existing rider with the fixed demo OTP 9324", async () => {
+test("login succeeds for an existing rider with the configured seeded demo OTP", async () => {
   const { dataStore } = createTestDataStore();
   const verificationService = createFakeVerificationService();
   const app = buildApp({ dataStore, verificationService });
+
+  const requestResponse = await invokeApp(app, {
+    method: "POST",
+    url: "/api/auth/request-login-otp",
+    headers: { "content-type": "application/json" },
+    body: {
+      phone: "9876543210"
+    }
+  });
+
+  assert.equal(requestResponse.status, 200);
+  assert.deepEqual(requestResponse.body, {
+    otp_sent: true,
+    auth_type: "demo_login",
+    phone: "+919876543210",
+    message: "Demo login OTP requested successfully"
+  });
+
+  const verifyResponse = await invokeApp(app, {
+    method: "POST",
+    url: "/api/auth/verify-login-otp",
+    headers: { "content-type": "application/json" },
+    body: {
+      phone: "9876543210",
+      otp: "9324"
+    }
+  });
+
+  assert.equal(verifyResponse.status, 200);
+  assert.equal(verifyResponse.body.verified, true);
+  assert.equal(verifyResponse.body.auth_type, "demo_login");
+  assert.equal(typeof verifyResponse.body.verification_token, "string");
 
   const response = await invokeApp(app, {
     method: "POST",
@@ -237,7 +298,7 @@ test("login succeeds for an existing rider with the fixed demo OTP 9324", async 
     headers: { "content-type": "application/json" },
     body: {
       phone: "9876543210",
-      otp: "9324"
+      verification_token: verifyResponse.body.verification_token
     }
   });
 
@@ -249,14 +310,35 @@ test("login succeeds for an existing rider with the fixed demo OTP 9324", async 
   assert.deepEqual(verificationService.verifiedOtps, []);
 });
 
-test("login rejects a bad OTP without calling Twilio", async () => {
+test("request-otp rejects phones that are not configured for demo signup", async () => {
   const { dataStore } = createTestDataStore();
   const verificationService = createFakeVerificationService();
   const app = buildApp({ dataStore, verificationService });
 
   const response = await invokeApp(app, {
     method: "POST",
-    url: "/api/auth/login",
+    url: "/api/auth/request-otp",
+    headers: { "content-type": "application/json" },
+    body: {
+      phone: "8454081061"
+    }
+  });
+
+  assert.equal(response.status, 400);
+  assert.deepEqual(response.body, {
+    error: "demo_signup_unavailable",
+    message: "No demo signup OTP is configured for this phone"
+  });
+});
+
+test("verify-login-otp rejects a bad OTP without calling Twilio", async () => {
+  const { dataStore } = createTestDataStore();
+  const verificationService = createFakeVerificationService();
+  const app = buildApp({ dataStore, verificationService });
+
+  const response = await invokeApp(app, {
+    method: "POST",
+    url: "/api/auth/verify-login-otp",
     headers: { "content-type": "application/json" },
     body: {
       phone: "9876543210",
@@ -270,6 +352,28 @@ test("login rejects a bad OTP without calling Twilio", async () => {
     message: "Invalid phone or otp"
   });
   assert.deepEqual(verificationService.verifiedOtps, []);
+});
+
+test("login rejects an invalid verification token", async () => {
+  const { dataStore } = createTestDataStore();
+  const verificationService = createFakeVerificationService();
+  const app = buildApp({ dataStore, verificationService });
+
+  const response = await invokeApp(app, {
+    method: "POST",
+    url: "/api/auth/login",
+    headers: { "content-type": "application/json" },
+    body: {
+      phone: "9876543210",
+      verification_token: "broken-token"
+    }
+  });
+
+  assert.equal(response.status, 401);
+  assert.deepEqual(response.body, {
+    error: "invalid_verification_token",
+    message: "Invalid verification token"
+  });
 });
 
 test("login returns 404 when rider does not exist", async () => {
@@ -305,7 +409,7 @@ test("/api/auth/me returns the authenticated rider profile and geography summary
     headers: { "content-type": "application/json" },
     body: {
       phone: "9451203344",
-      otp: "9324"
+      otp: "7712"
     }
   });
 
@@ -322,4 +426,25 @@ test("/api/auth/me returns the authenticated rider profile and geography summary
   assert.equal(meResponse.body.city.id, "lucknow");
   assert.equal(meResponse.body.zone.id, "lucknow_gomti_nagar");
   assert.equal(meResponse.body.zone.risk_class, "medium");
+});
+
+test("another seeded rider can verify login with their own hardcoded demo OTP", async () => {
+  const { dataStore } = createTestDataStore();
+  const verificationService = createFakeVerificationService();
+  const app = buildApp({ dataStore, verificationService });
+
+  const verifyResponse = await invokeApp(app, {
+    method: "POST",
+    url: "/api/auth/verify-login-otp",
+    headers: { "content-type": "application/json" },
+    body: {
+      phone: "9451203344",
+      otp: "7712"
+    }
+  });
+
+  assert.equal(verifyResponse.status, 200);
+  assert.equal(verifyResponse.body.verified, true);
+  assert.equal(verifyResponse.body.auth_type, "demo_login");
+  assert.equal(typeof verifyResponse.body.verification_token, "string");
 });

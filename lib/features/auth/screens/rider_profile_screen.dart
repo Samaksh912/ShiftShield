@@ -8,7 +8,14 @@ import '../../../core/services/auth_service.dart';
 import '../../../core/router/app_router.dart';
 
 class RiderProfileScreen extends StatefulWidget {
-  const RiderProfileScreen({super.key});
+  final String phone;
+  final String verificationToken;
+
+  const RiderProfileScreen({
+    super.key,
+    required this.phone,
+    required this.verificationToken,
+  });
 
   @override
   State<RiderProfileScreen> createState() => _RiderProfileScreenState();
@@ -32,59 +39,47 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
   bool _isLoading = false;
   bool _isSubmitting = false;
 
-  // Zones from API
+  // Cities & zones from API
+  List<Map<String, dynamic>> _cities = [];
   List<Map<String, dynamic>> _zones = [];
+  String? _selectedCityId;
   String? _selectedZoneId;
   bool _zonesLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadZones();
+    _loadCitiesAndZones();
   }
 
-  Future<void> _loadZones() async {
+  Future<void> _loadCitiesAndZones() async {
     try {
-      final zones = await ApiService.getZones();
+      final data = await ApiService.getCities();
+      final cities = (data['cities'] as List<dynamic>).cast<Map<String, dynamic>>();
       setState(() {
-        _zones = zones.cast<Map<String, dynamic>>();
-        if (_zones.isNotEmpty) _selectedZoneId = _zones.first['id'] as String;
+        _cities = cities;
+        if (_cities.isNotEmpty) {
+          _selectedCityId = _cities.first['id'] as String;
+          _zones = (_cities.first['zones'] as List<dynamic>).cast<Map<String, dynamic>>();
+          if (_zones.isNotEmpty) _selectedZoneId = _zones.first['id'] as String;
+        }
         _zonesLoading = false;
       });
-      // After zones load, try to auto-fill from mock platform
-      _loadMockPlatformData();
+      _applyZoneAverages();
     } catch (_) {
       setState(() => _zonesLoading = false);
     }
   }
 
-  Future<void> _loadMockPlatformData() async {
-    final phone = await AuthService.getPhone();
-    if (phone == null) return;
-
-    setState(() => _isLoading = true);
-    try {
-      final data = await ApiService.getMockPlatformRider(phone);
-      final found = data['found'] as bool? ?? false;
-      if (found) {
-        // Auto-fill platform
-        final platform = data['platform'] as String? ?? '';
-        if (platform == 'swiggy') setState(() => _selectedPlatform = PlatformAlignment.swiggy);
-        if (platform == 'zomato') setState(() => _selectedPlatform = PlatformAlignment.zomato);
-        // Auto-fill baselines
-        final lunch = data['avg_lunch_earnings'];
-        final dinner = data['avg_dinner_earnings'];
-        if (lunch != null) _lunchBaselineController.text = lunch.toString();
-        if (dinner != null) _dinnerBaselineController.text = dinner.toString();
-      } else {
-        // Use zone averages for the selected zone
-        _applyZoneAverages();
-      }
-    } catch (_) {
-      _applyZoneAverages();
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
+  void _onCityChanged(String? cityId) {
+    if (cityId == null) return;
+    final city = _cities.firstWhere((c) => c['id'] == cityId, orElse: () => _cities.first);
+    setState(() {
+      _selectedCityId = cityId;
+      _zones = (city['zones'] as List<dynamic>).cast<Map<String, dynamic>>();
+      _selectedZoneId = _zones.isNotEmpty ? _zones.first['id'] as String : null;
+    });
+    _applyZoneAverages();
   }
 
   void _applyZoneAverages() {
@@ -128,7 +123,7 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
   }
 
   Future<void> _completeSetup() async {
-    if (_selectedZoneId == null) return;
+    if (_selectedZoneId == null || _selectedCityId == null) return;
     final name = _fullNameController.text.trim();
     if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -139,16 +134,20 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
 
     setState(() => _isSubmitting = true);
     try {
-      await ApiService.createProfile({
+      final data = await ApiService.signup({
         'name': name,
+        'phone': widget.phone,
         'platform': _selectedPlatform == PlatformAlignment.swiggy ? 'swiggy' : 'zomato',
+        'city_id': _selectedCityId,
         'zone_id': _selectedZoneId,
         'shifts_covered': _shiftsValue,
-        'payout_preference': _payoutMode == PayoutMode.wallet ? 'wallet' : 'direct',
+        'payout_preference': _payoutMode == PayoutMode.wallet ? 'wallet' : 'upi',
         'upi_id': _upiController.text.trim().isEmpty ? null : _upiController.text.trim(),
-        'lunch_baseline': int.tryParse(_lunchBaselineController.text) ?? 420,
-        'dinner_baseline': int.tryParse(_dinnerBaselineController.text) ?? 680,
+        'verification_token': widget.verificationToken,
       });
+      // Save the JWT token from signup response
+      final token = data['token'] as String;
+      await AuthService.saveToken(token);
       if (!mounted) return;
       context.go(AppRoutes.dashboard);
     } on ApiException catch (e) {
@@ -254,45 +253,85 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
                     ),
                     SizedBox(height: 24),
 
-                    // Zone Dropdown (live from API)
+                    // City & Zone Dropdowns (live from API)
                     if (_zonesLoading)
                       const Center(child: CircularProgressIndicator())
                     else
-                    Container(
-                      decoration: BoxDecoration(
-                        color: context.colors.surfaceContainer,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildSectionLabel('Operational Zone'),
-                          DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: _selectedZoneId,
-                              isExpanded: true,
-                              dropdownColor: context.colors.surfaceContainer,
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: context.colors.onSurface,
-                              ),
-                              icon: Icon(Icons.expand_more, color: context.colors.primary),
-                              items: _zones.map((z) {
-                                return DropdownMenuItem<String>(
-                                  value: z['id'] as String,
-                                  child: Text('${z['name']}, BLR'),
-                                );
-                              }).toList(),
-                              onChanged: (val) {
-                                setState(() => _selectedZoneId = val);
-                                _applyZoneAverages();
-                              },
-                            ),
+                    Column(
+                      children: [
+                        // City Dropdown
+                        Container(
+                          decoration: BoxDecoration(
+                            color: context.colors.surfaceContainer,
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                        ],
-                      ),
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildSectionLabel('City'),
+                              DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: _selectedCityId,
+                                  isExpanded: true,
+                                  dropdownColor: context.colors.surfaceContainer,
+                                  style: GoogleFonts.spaceGrotesk(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: context.colors.onSurface,
+                                  ),
+                                  icon: Icon(Icons.expand_more, color: context.colors.primary),
+                                  items: _cities.map((c) {
+                                    return DropdownMenuItem<String>(
+                                      value: c['id'] as String,
+                                      child: Text('${c['name']}'),
+                                    );
+                                  }).toList(),
+                                  onChanged: _onCityChanged,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        // Zone Dropdown
+                        Container(
+                          decoration: BoxDecoration(
+                            color: context.colors.surfaceContainer,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildSectionLabel('Operational Zone'),
+                              DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: _selectedZoneId,
+                                  isExpanded: true,
+                                  dropdownColor: context.colors.surfaceContainer,
+                                  style: GoogleFonts.spaceGrotesk(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: context.colors.onSurface,
+                                  ),
+                                  icon: Icon(Icons.expand_more, color: context.colors.primary),
+                                  items: _zones.map((z) {
+                                    return DropdownMenuItem<String>(
+                                      value: z['id'] as String,
+                                      child: Text('${z['name']}'),
+                                    );
+                                  }).toList(),
+                                  onChanged: (val) {
+                                    setState(() => _selectedZoneId = val);
+                                    _applyZoneAverages();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 24),
 
@@ -757,7 +796,6 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
     return GestureDetector(
       onTap: () {
         setState(() => _selectedPlatform = platform);
-        _loadMockPlatformData();
       },
       child: Container(
         padding: EdgeInsets.all(24),

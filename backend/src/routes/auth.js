@@ -6,7 +6,34 @@ function buildAuthRouter({ authService }) {
 
   router.post("/request-otp", async (req, res, next) => {
     try {
-      const response = await authService.requestOtp(req.body || {});
+      const response = await authService.requestSignupOtp(req.body || {});
+      return res.status(200).json(response);
+    } catch (error) {
+      return next(error);
+    }
+  });
+
+  router.post("/verify-otp", async (req, res, next) => {
+    try {
+      const response = await authService.verifySignupOtp(req.body || {});
+      return res.status(200).json(response);
+    } catch (error) {
+      return next(error);
+    }
+  });
+
+  router.post("/request-login-otp", async (req, res, next) => {
+    try {
+      const response = await authService.requestLoginOtp(req.body || {});
+      return res.status(200).json(response);
+    } catch (error) {
+      return next(error);
+    }
+  });
+
+  router.post("/verify-login-otp", async (req, res, next) => {
+    try {
+      const response = await authService.verifyLoginOtp(req.body || {});
       return res.status(200).json(response);
     } catch (error) {
       return next(error);
