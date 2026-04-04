@@ -23,7 +23,32 @@ class ApiService {
   }
 
   static Map<String, dynamic> _handleResponse(http.Response response) {
-    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    final contentType = response.headers['content-type'] ?? '';
+    if (!contentType.contains('application/json')) {
+      throw ApiException(
+        statusCode: response.statusCode,
+        errorCode: 'unexpected_response',
+        message: response.statusCode == 404
+            ? 'Endpoint not found. Check backend URL and route path.'
+            : 'Server returned a non-JSON response.',
+        rawBody: {
+          'body': response.body,
+          'content_type': contentType,
+        },
+      );
+    }
+
+    final decoded = jsonDecode(response.body);
+    if (decoded is! Map<String, dynamic>) {
+      throw ApiException(
+        statusCode: response.statusCode,
+        errorCode: 'unexpected_response',
+        message: 'Server returned an unexpected response shape.',
+        rawBody: {'body': response.body},
+      );
+    }
+
+    final body = decoded;
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return body;
     }
@@ -122,10 +147,8 @@ class ApiService {
     return _get('/api/auth/me');
   }
 
-  /// PUT /api/auth/me  (update rider profile — when backend supports it)
-  static Future<Map<String, dynamic>> updateMe(Map<String, dynamic> body) {
-    return _put('/api/auth/me', body);
-  }
+  // Note: PUT /api/auth/me is not supported by the backend.
+  // Profile edits are session-local only.
 
   // ─────────────────────────────────────────────
   // CITIES & ZONES

@@ -65,11 +65,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
         allZones.addAll(cityZones);
       }
 
+      final riderData = Map<String, dynamic>.from(
+        (riderRes['rider'] as Map<String, dynamic>?) ?? <String, dynamic>{},
+      );
+      final zoneData = Map<String, dynamic>.from(
+        (riderRes['zone'] as Map<String, dynamic>?) ?? <String, dynamic>{},
+      );
+
+      Map<String, dynamic>? matchedZone;
+      for (final zone in allZones) {
+        final zoneMap = zone as Map<String, dynamic>;
+        if (zoneMap['id'] == riderData['zone_id']) {
+          matchedZone = zoneMap;
+          break;
+        }
+      }
+
+      riderData['zone_name'] = zoneData['name'] ?? matchedZone?['name'] ?? riderData['zone_name'];
+      riderData['baselines'] = {
+        'lunch': matchedZone?['avg_lunch_earnings'] ?? riderData['lunch_baseline'] ?? 0,
+        'dinner': matchedZone?['avg_dinner_earnings'] ?? riderData['dinner_baseline'] ?? 0,
+      };
+      riderData['preferences'] = {
+        'shift_preference': riderData['shifts_covered'] ?? 'both',
+        'payout_preference': riderData['payout_preference'] ?? 'wallet',
+        'upi_id': riderData['upi_id'] ?? '',
+      };
+
       _setupState(
-        riderData: riderRes['rider'],
+        riderData: riderData,
         zonesData: allZones,
         hasPolicy:
-            policyRes.containsKey('policy') && policyRes['policy'] != null,
+            policyRes.containsKey('current_policy') && policyRes['current_policy'] != null,
       );
     } catch (e) {
       debugPrint('>>> PROFILE FETCH ERROR: $e');
@@ -99,8 +126,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _saveChanges() async {
-    // Validate if direct payout
-    if (_preferences['payout_preference'] == 'direct' &&
+    // Validate if UPI payout
+    if (_preferences['payout_preference'] == 'upi' &&
         _upiController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -117,15 +144,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final updatedPrefs = Map<String, dynamic>.from(_preferences);
     updatedPrefs['upi_id'] = _upiController.text.trim();
 
-    final body = {'zone_id': _rider['zone_id'], 'preferences': updatedPrefs};
-
     try {
-      await ApiService.updateMe(body);
+      setState(() {
+        _preferences = updatedPrefs;
+        _rider['zone_name'] = _zones.firstWhere(
+          (z) => z['id'] == _rider['zone_id'],
+          orElse: () => {'name': _rider['zone_name'] ?? 'Unknown'},
+        )['name'];
+      });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Preferences securely saved.',
+              'Preferences updated for this session.',
               style: GoogleFonts.manrope(fontWeight: FontWeight.bold),
             ),
             backgroundColor: Colors.green.shade700,
@@ -136,7 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to save preferences. Retry later.'),
+            content: Text('Could not update profile right now.'),
             backgroundColor: Colors.red.shade700,
           ),
         );

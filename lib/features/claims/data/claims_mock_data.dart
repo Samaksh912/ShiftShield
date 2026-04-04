@@ -2,7 +2,7 @@ const Map<String, dynamic> mockClaimsData = {
   'summary': {
     'total_claims': 5,
     'total_payout': 2450,
-    'total_premiums': 640,
+    'total_premiums_paid': 640,
     'net_benefit': 1810,
   },
   'claims': [

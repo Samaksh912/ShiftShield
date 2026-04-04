@@ -11,7 +11,7 @@ class ClaimsSummarySection extends StatelessWidget {
   Widget build(BuildContext context) {
     final totalClaims = summary['total_claims'] ?? 0;
     final totalPayout = summary['total_payout'] ?? 0;
-    final totalPremiums = summary['total_premiums'] ?? 0;
+    final totalPremiums = summary['total_premiums_paid'] ?? summary['total_premiums'] ?? 0;
     final netBenefit = summary['net_benefit'] ?? 0;
 
     final isPositive = netBenefit >= 0;

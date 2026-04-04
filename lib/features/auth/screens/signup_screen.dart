@@ -7,7 +7,6 @@ import '../../../core/services/api_service.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/router/app_router.dart';
 import '../widgets/animated_network_background.dart';
-import '../../../core/config.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -26,18 +25,11 @@ class _SignupScreenState extends State<SignupScreen> {
 
     setState(() => _isLoading = true);
     try {
-      // Demo bypass — skip API entirely for known demo signup numbers
-      if (AppConfig.isDemoSignupPhone(mobileNumber)) {
-        await AuthService.savePhone(mobileNumber);
-        if (!mounted) return;
-        context.push(AppRoutes.verifyOtpPath(mobileNumber), extra: {'isLogin': false});
-        return;
-      }
-
+      await AuthService.clearToken();
       await ApiService.sendSignupOtp(mobileNumber);
       await AuthService.savePhone(mobileNumber);
       if (!mounted) return;
-      context.push(AppRoutes.verifyOtpPath(mobileNumber));
+      context.push(AppRoutes.verifyOtpPath(mobileNumber), extra: {'isLogin': false});
     } on ApiException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

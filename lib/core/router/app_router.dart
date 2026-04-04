@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../config.dart';
 import '../services/auth_service.dart';
 import '../../features/onboarding/screens/onboarding_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
@@ -42,22 +41,17 @@ abstract class RouteNames {
 final GoRouter appRouter = GoRouter(
   debugLogDiagnostics: true,
 
-  // Where the app starts — devBypassAuth skips straight to dashboard.
-  initialLocation:
-      AppConfig.devBypassAuth ? AppRoutes.dashboard : AppRoutes.onboarding,
+  initialLocation: AppRoutes.onboarding,
 
   // Auth guard redirect
   redirect: (BuildContext context, GoRouterState state) async {
     // Protected routes that require a valid token
-    final protectedRoutes = [AppRoutes.dashboard, AppRoutes.riderProfile];
+    final protectedRoutes = [AppRoutes.dashboard];
     final bool isProtected = protectedRoutes.any(
       (r) => state.matchedLocation.startsWith(r.split('/:').first),
     );
 
     if (!isProtected) return null; // auth routes, let through
-
-    // Dev bypass: token was pre-saved in main() — always let through
-    if (AppConfig.devBypassAuth) return null;
 
     final token = await AuthService.getToken();
     if (token == null || token.isEmpty) {

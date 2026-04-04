@@ -1,21 +1,11 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 import 'package:flutter/foundation.dart'; // for kIsWeb
 
 import 'theme/app_theme.dart';
-import 'core/config.dart';
-import 'core/services/auth_service.dart';
 import 'core/router/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  if (AppConfig.devBypassAuth) {
-    await AuthService.saveToken(AppConfig.devJwt);
-    await AuthService.savePhone('9876543210');
-  } else {
-    await AuthService.clearToken();
-  }
 
   runApp(const IgniteApp());
 }

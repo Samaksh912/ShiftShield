@@ -33,14 +33,14 @@ class _PolicyScreenState extends State<PolicyScreen> {
       final historyRes = await ApiService.getPolicyHistory();
 
       setState(() {
-        _currentPolicy = currentRes['policy'] as Map<String, dynamic>? ?? {};
+        _currentPolicy = currentRes['current_policy'] as Map<String, dynamic>? ?? {};
         _policyHistory = historyRes['policies'] as List<dynamic>? ?? [];
         _isLoading = false;
       });
     } catch (e) {
       debugPrint('>>> POLICY FETCH ERROR: $e');
       setState(() {
-        _currentPolicy = mockCurrentPolicy['policy'];
+        _currentPolicy = mockCurrentPolicy['current_policy'];
         _policyHistory = mockPolicyHistory['policies'];
         _isLoading = false;
       });

@@ -91,7 +91,7 @@ class PreferencesCard extends StatelessWidget {
               context,
               options: [
                 {'label': 'Wallet', 'value': 'wallet'},
-                {'label': 'Direct (UPI)', 'value': 'direct'},
+                {'label': 'Direct (UPI)', 'value': 'upi'},
               ],
               currentValue: payoutPref,
               onChanged: onPayoutChanged,
@@ -102,7 +102,7 @@ class PreferencesCard extends StatelessWidget {
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOutCubic,
               alignment: Alignment.topCenter,
-              child: payoutPref == 'direct'
+              child: payoutPref == 'upi'
                   ? Padding(
                       padding: const EdgeInsets.only(top: 24),
                       child: Column(

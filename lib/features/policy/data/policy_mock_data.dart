@@ -1,5 +1,5 @@
 const Map<String, dynamic> mockCurrentPolicy = {
-  'policy': {
+  'current_policy': {
     'week_start': '2024-03-30',
     'week_end': '2024-04-05',
     'status': 'active',

@@ -1,10 +1,9 @@
 class AppConfig {
-  static const String baseUrl = 'http://192.168.1.47:3000';
-  static const bool devBypassAuth = true;
-  static const String devJwt =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
-      '.eyJyaWRlcl9pZCI6IjExMTExMTExLTExMTEtNDExMS04MTExLTExMTExMTExMTExMSIsImlhdCI6MTc3NTIzODgwNywiZXhwIjoxNzc3ODMwODA3fQ'
-      '.jZLQHWevIZRIl-cRgOhBkfeDgjNAkuVPu2da9smJvlU';
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://192.168.1.47:3000',
+  );
+  static const bool devBypassAuth = false;
 
   // Demo login credentials: phone → OTP
   static const Map<String, String> demoLoginOtps = {
