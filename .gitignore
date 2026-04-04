@@ -47,3 +47,18 @@ app.*.map.json
 
 
 node_modules/
+
+# Python virtual environments
+.venv/
+venv/
+env/
+**/.venv/
+**/venv/
+**/env/
+ml-service/.venv/
+
+# Python cache
+__pycache__/
+*.pyi
+*.egg-info/
+dist/
