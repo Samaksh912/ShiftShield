@@ -31,7 +31,7 @@ class _PolicyScreenState extends State<PolicyScreen> {
     try {
       final currentRes = await ApiService.getCurrentPolicy();
       final historyRes = await ApiService.getPolicyHistory();
-      
+
       setState(() {
         _currentPolicy = currentRes['policy'] as Map<String, dynamic>? ?? {};
         _policyHistory = historyRes['policies'] as List<dynamic>? ?? [];
@@ -58,7 +58,9 @@ class _PolicyScreenState extends State<PolicyScreen> {
           enabled: _isLoading,
           effect: ShimmerEffect(
             baseColor: context.colors.surfaceContainerHigh,
-            highlightColor: context.colors.surfaceContainerHighest.withValues(alpha: 0.5),
+            highlightColor: context.colors.surfaceContainerHighest.withValues(
+              alpha: 0.5,
+            ),
             duration: const Duration(milliseconds: 1200),
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
@@ -76,7 +78,7 @@ class _PolicyScreenState extends State<PolicyScreen> {
                 ),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                     if (_currentPolicy.isNotEmpty)
+                    if (_currentPolicy.isNotEmpty)
                       CurrentPolicyCard(policy: _currentPolicy)
                           .animate()
                           .fadeIn(duration: 400.ms)

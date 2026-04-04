@@ -25,7 +25,9 @@ class PolicyHistoryList extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        ...policies.map((p) => PolicyHistoryItem(policy: p as Map<String, dynamic>)),
+        ...policies.map(
+          (p) => PolicyHistoryItem(policy: p as Map<String, dynamic>),
+        ),
       ],
     );
   }
@@ -46,58 +48,69 @@ class PolicyHistoryItem extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: context.colors.outline.withValues(alpha: 0.05),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: context.colors.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.history,
-                  color: context.colors.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(width: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$weekStart - $weekEnd',
-                    style: GoogleFonts.spaceGrotesk(
-                      color: context.colors.onSurface,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+          Expanded(
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: context.colors.surfaceContainerHighest.withValues(
+                      alpha: 0.5,
                     ),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(height: 4),
-                  Row(
+                  child: Icon(
+                    Icons.history,
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        '$weekStart - $weekEnd',
+                        style: GoogleFonts.spaceGrotesk(
+                          color: context.colors.onSurface,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
                       Text(
                         shiftsCovered.toUpperCase(),
                         style: GoogleFonts.manrope(
                           color: context.colors.onSurfaceVariant,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5,
+                          letterSpacing: 1.0,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
+          const SizedBox(width: 16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -111,18 +124,22 @@ class PolicyHistoryItem extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: context.colors.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(4),
+                  color: status.toLowerCase() == 'expired'
+                      ? context.colors.error.withValues(alpha: 0.1)
+                      : context.colors.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   status.toUpperCase(),
                   style: GoogleFonts.manrope(
-                    color: context.colors.onSurfaceVariant,
+                    color: status.toLowerCase() == 'expired'
+                        ? context.colors.error
+                        : context.colors.onSurfaceVariant,
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
-                    letterSpacing: 1.5,
+                    letterSpacing: 1.2,
                   ),
                 ),
               ),

@@ -12,7 +12,7 @@ class PolicyAppBar extends StatelessWidget {
       pinned: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
-      expandedHeight: 65,
+      toolbarHeight: 65,
       flexibleSpace: ClipRRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
@@ -21,36 +21,31 @@ class PolicyAppBar extends StatelessWidget {
               color: Theme.of(context).brightness == Brightness.dark
                   ? const Color(0xFF0E0E0E).withValues(alpha: 0.70)
                   : Colors.white.withValues(alpha: 0.80),
-              border: const Border(bottom: BorderSide.none),
-            ),
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 8,
-              left: 24,
-              right: 24,
-              bottom: 8,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.shield,
-                  color: context.colors.primary,
-                  size: 24,
+              border: Border(
+                bottom: BorderSide(
+                  color: context.colors.outline.withValues(alpha: 0.05),
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  'POLICIES',
-                  style: GoogleFonts.spaceGrotesk(
-                    color: context.colors.primary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
+      ),
+      // Placed inside title so Flutter natively handles the Safe Area!
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(Icons.shield, color: context.colors.primary, size: 24),
+          const SizedBox(width: 12),
+          Text(
+            'POLICIES',
+            style: GoogleFonts.spaceGrotesk(
+              color: context.colors.primary,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              letterSpacing: -0.5,
+            ),
+          ),
+        ],
       ),
     );
   }

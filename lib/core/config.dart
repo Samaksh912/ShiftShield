@@ -3,13 +3,13 @@ class AppConfig {
   //     or an ngrok HTTPS URL (e.g. https://abc123.ngrok-free.app)
   // ⚠️  Android Emulator only: use http://10.0.2.2:3000
   static const String baseUrl =
-      'http://192.168.1.8:3000'; // ← change me for physical device
+      'http://192.168.1.47:3000'; // ← change me for physical device
 
   // ─── DEV BYPASS ────────────────────────────────────────────────────────────
   // Set to true to skip the entire auth flow and land directly on the Dashboard
   // using the pre-seeded Rider "Asha" (rider_id: 11111111-1111-4111-8111-111111111111)
   // ⚠️  REMEMBER to set this back to false before a real demo or store build!
-  static const bool devBypassAuth = true;
+  static const bool devBypassAuth = false;
 
   // JWT for Rider Asha — generated with secret 'shiftshield-dev-secret'
   static const String devJwt =
