@@ -123,11 +123,34 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
   }
 
   Future<void> _completeSetup() async {
-    if (_selectedZoneId == null || _selectedCityId == null) return;
+    if (!_isCompliant) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please accept the declaration to continue')),
+      );
+      return;
+    }
+    if (_selectedZoneId == null || _selectedCityId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select your city and operational zone')),
+      );
+      return;
+    }
     final name = _fullNameController.text.trim();
     if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter your full name')),
+      );
+      return;
+    }
+    if (_payoutMode == PayoutMode.upi && _upiController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter your UPI ID to continue')),
+      );
+      return;
+    }
+    if (widget.verificationToken.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Verification expired. Please request OTP again.')),
       );
       return;
     }
@@ -712,7 +735,7 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                   onPressed: (_isCompliant && !_isSubmitting) ? _completeSetup : null,
+                  onPressed: _isSubmitting ? null : _completeSetup,
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.zero,
                     shape: RoundedRectangleBorder(

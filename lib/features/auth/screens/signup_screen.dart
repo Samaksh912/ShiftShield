@@ -21,16 +21,25 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Future<void> _getOtp() async {
     final mobileNumber = _mobileController.text.trim();
+    debugPrint('[SignupScreen] _getOtp start phone=$mobileNumber baseUrl=${ApiService.debugBaseUrl}');
     if (mobileNumber.length != 10) return;
 
     setState(() => _isLoading = true);
     try {
+      debugPrint('[SignupScreen] Clearing old auth token before signup OTP request');
       await AuthService.clearToken();
+      debugPrint('[SignupScreen] Calling sendSignupOtp for phone=$mobileNumber');
       await ApiService.sendSignupOtp(mobileNumber);
+      debugPrint('[SignupScreen] OTP request succeeded for phone=$mobileNumber');
       await AuthService.savePhone(mobileNumber);
+      debugPrint('[SignupScreen] Saved phone locally, navigating to verify OTP');
       if (!mounted) return;
       context.push(AppRoutes.verifyOtpPath(mobileNumber), extra: {'isLogin': false});
     } on ApiException catch (e) {
+      debugPrint(
+        '[SignupScreen] ApiException status=${e.statusCode} code=${e.errorCode} '
+        'message=${e.message} raw=${e.rawBody}',
+      );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -38,7 +47,9 @@ class _SignupScreenState extends State<SignupScreen> {
           backgroundColor: Colors.red.shade700,
         ),
       );
-    } catch (_) {
+    } catch (error, stackTrace) {
+      debugPrint('[SignupScreen] Unexpected error: $error');
+      debugPrint('[SignupScreen] Stack trace: $stackTrace');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

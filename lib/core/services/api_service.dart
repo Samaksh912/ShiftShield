@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../config.dart';
 import 'auth_service.dart';
+import 'local_app_data_service.dart';
 
 /// A centralized API client that:
 /// - Attaches JWT to every authenticated request
@@ -9,6 +11,28 @@ import 'auth_service.dart';
 /// - Throws [ApiException] on non-2xx responses
 class ApiService {
   static final String _base = AppConfig.baseUrl;
+  static String get debugBaseUrl => _base;
+
+  static void _log(String message) {
+    if (kDebugMode) {
+      debugPrint('[ApiService] $message');
+    }
+  }
+
+  static Future<T> _withLocalFallback<T>(
+    Future<T> Function() localCall,
+  ) async {
+    try {
+      return await localCall();
+    } on LocalServiceError catch (error) {
+      throw ApiException(
+        statusCode: error.statusCode,
+        errorCode: error.errorCode,
+        message: error.message,
+        rawBody: error.rawBody,
+      );
+    }
+  }
 
   // ─────────────────────────────────────────────
   // INTERNAL HELPERS
@@ -16,6 +40,8 @@ class ApiService {
 
   static Future<Map<String, String>> _authHeaders() async {
     final token = await AuthService.getToken();
+    _log('Resolved base URL: $_base');
+    _log('Auth token present: ${token != null && token.isNotEmpty}');
     return {
       'Content-Type': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
@@ -24,6 +50,10 @@ class ApiService {
 
   static Map<String, dynamic> _handleResponse(http.Response response) {
     final contentType = response.headers['content-type'] ?? '';
+    _log(
+      'Response ${response.request?.method ?? 'UNKNOWN'} ${response.request?.url} '
+      'status=${response.statusCode} contentType=$contentType body=${response.body}',
+    );
     if (!contentType.contains('application/json')) {
       throw ApiException(
         statusCode: response.statusCode,
@@ -62,7 +92,9 @@ class ApiService {
 
   static Future<Map<String, dynamic>> _get(String path) async {
     final headers = await _authHeaders();
-    final response = await http.get(Uri.parse('$_base$path'), headers: headers);
+    final uri = Uri.parse('$_base$path');
+    _log('GET $uri headers=${headers.keys.toList()}');
+    final response = await http.get(uri, headers: headers);
     return _handleResponse(response);
   }
 
@@ -71,10 +103,13 @@ class ApiService {
     Map<String, dynamic> body,
   ) async {
     final headers = await _authHeaders();
+    final uri = Uri.parse('$_base$path');
+    final encodedBody = jsonEncode(body);
+    _log('POST $uri headers=${headers.keys.toList()} body=$encodedBody');
     final response = await http.post(
-      Uri.parse('$_base$path'),
+      uri,
       headers: headers,
-      body: jsonEncode(body),
+      body: encodedBody,
     );
     return _handleResponse(response);
   }
@@ -84,10 +119,13 @@ class ApiService {
     Map<String, dynamic> body,
   ) async {
     final headers = await _authHeaders();
+    final uri = Uri.parse('$_base$path');
+    final encodedBody = jsonEncode(body);
+    _log('PUT $uri headers=${headers.keys.toList()} body=$encodedBody');
     final response = await http.put(
-      Uri.parse('$_base$path'),
+      uri,
       headers: headers,
-      body: jsonEncode(body),
+      body: encodedBody,
     );
     return _handleResponse(response);
   }
@@ -98,17 +136,26 @@ class ApiService {
 
   /// POST /api/auth/request-otp  (signup OTP)
   static Future<Map<String, dynamic>> sendSignupOtp(String phone) {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() => LocalAppDataService.sendSignupOtp(phone));
+    }
     return _post('/api/auth/request-otp', {'phone': phone});
   }
 
   /// POST /api/auth/verify-otp  (signup OTP verification)
   /// Returns { verified, verification_token, ... }
   static Future<Map<String, dynamic>> verifySignupOtp(String phone, String otp) {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() => LocalAppDataService.verifySignupOtp(phone, otp));
+    }
     return _post('/api/auth/verify-otp', {'phone': phone, 'otp': otp});
   }
 
   /// POST /api/auth/signup  (complete signup with profile)
   static Future<Map<String, dynamic>> signup(Map<String, dynamic> body) {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() => LocalAppDataService.signup(body));
+    }
     return _post('/api/auth/signup', body);
   }
 
@@ -118,12 +165,18 @@ class ApiService {
 
   /// POST /api/auth/request-login-otp
   static Future<Map<String, dynamic>> sendLoginOtp(String phone) {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() => LocalAppDataService.sendLoginOtp(phone));
+    }
     return _post('/api/auth/request-login-otp', {'phone': phone});
   }
 
   /// POST /api/auth/verify-login-otp
   /// Returns { verified, verification_token, ... }
   static Future<Map<String, dynamic>> verifyLoginOtp(String phone, String otp) {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() => LocalAppDataService.verifyLoginOtp(phone, otp));
+    }
     return _post('/api/auth/verify-login-otp', {'phone': phone, 'otp': otp});
   }
 
@@ -132,6 +185,9 @@ class ApiService {
     String phone,
     String verificationToken,
   ) {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() => LocalAppDataService.login(phone, verificationToken));
+    }
     return _post('/api/auth/login', {
       'phone': phone,
       'verification_token': verificationToken,
@@ -144,6 +200,12 @@ class ApiService {
 
   /// GET /api/auth/me
   static Future<Map<String, dynamic>> getMe() {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() async {
+        final phone = await AuthService.getPhone();
+        return LocalAppDataService.getMe(phone);
+      });
+    }
     return _get('/api/auth/me');
   }
 
@@ -157,6 +219,9 @@ class ApiService {
   /// GET /api/cities
   /// Returns { cities: [ { id, name, zones: [...] }, ... ] }
   static Future<Map<String, dynamic>> getCities() {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(LocalAppDataService.getCities);
+    }
     return _get('/api/cities');
   }
 
@@ -166,6 +231,12 @@ class ApiService {
 
   /// POST /api/quotes/generate
   static Future<Map<String, dynamic>> generateQuote(String weekStart) {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() async {
+        final phone = await AuthService.getPhone();
+        return LocalAppDataService.generateQuote(phone, weekStart);
+      });
+    }
     return _post('/api/quotes/generate', {'week_start': weekStart});
   }
 
@@ -180,6 +251,12 @@ class ApiService {
     String? paymentReferenceId,
     String? paymentStatus,
   }) {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() async {
+        final phone = await AuthService.getPhone();
+        return LocalAppDataService.createPolicy(phone, quoteId, paymentMethod);
+      });
+    }
     return _post('/api/policies/create', {
       'quote_id': quoteId,
       'payment_method': paymentMethod,
@@ -191,6 +268,12 @@ class ApiService {
 
   /// GET /api/policies/current
   static Future<Map<String, dynamic>> getCurrentPolicy() {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() async {
+        final phone = await AuthService.getPhone();
+        return LocalAppDataService.getCurrentPolicy(phone);
+      });
+    }
     return _get('/api/policies/current');
   }
 
@@ -199,11 +282,23 @@ class ApiService {
     int limit = 20,
     int offset = 0,
   }) {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() async {
+        final phone = await AuthService.getPhone();
+        return LocalAppDataService.getPolicyHistory(phone);
+      });
+    }
     return _get('/api/policies/history?limit=$limit&offset=$offset');
   }
 
   /// GET /api/policies/:id
   static Future<Map<String, dynamic>> getPolicyById(String policyId) {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() async {
+        final phone = await AuthService.getPhone();
+        return LocalAppDataService.getPolicyById(phone, policyId);
+      });
+    }
     return _get('/api/policies/$policyId');
   }
 
@@ -213,6 +308,12 @@ class ApiService {
 
   /// GET /api/dashboard
   static Future<Map<String, dynamic>> getDashboard() {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() async {
+        final phone = await AuthService.getPhone();
+        return LocalAppDataService.getDashboard(phone);
+      });
+    }
     return _get('/api/dashboard');
   }
 
@@ -222,16 +323,34 @@ class ApiService {
 
   /// GET /api/wallet
   static Future<Map<String, dynamic>> getWallet() {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() async {
+        final phone = await AuthService.getPhone();
+        return LocalAppDataService.getWallet(phone);
+      });
+    }
     return _get('/api/wallet');
   }
 
   /// POST /api/wallet/topup
   static Future<Map<String, dynamic>> topUp(int amount) {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() async {
+        final phone = await AuthService.getPhone();
+        return LocalAppDataService.topUp(phone, amount);
+      });
+    }
     return _post('/api/wallet/topup', {'amount': amount});
   }
 
   /// POST /api/wallet/withdraw
   static Future<Map<String, dynamic>> withdraw(int amount) {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() async {
+        final phone = await AuthService.getPhone();
+        return LocalAppDataService.withdraw(phone, amount);
+      });
+    }
     return _post('/api/wallet/withdraw', {'amount': amount});
   }
 
@@ -241,6 +360,12 @@ class ApiService {
 
   /// GET /api/claims
   static Future<Map<String, dynamic>> getClaims() {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() async {
+        final phone = await AuthService.getPhone();
+        return LocalAppDataService.getClaims(phone);
+      });
+    }
     return _get('/api/claims');
   }
 
@@ -250,6 +375,12 @@ class ApiService {
 
   /// GET /api/notifications
   static Future<Map<String, dynamic>> getNotifications() {
+    if (AppConfig.useLocalAppData) {
+      return _withLocalFallback(() async {
+        final phone = await AuthService.getPhone();
+        return LocalAppDataService.getNotifications(phone);
+      });
+    }
     return _get('/api/notifications');
   }
 }
